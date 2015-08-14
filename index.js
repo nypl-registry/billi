@@ -4,8 +4,10 @@ var app = express();
 
 var db = require('./lib/db.js');
 
-
-db.createTriplesTable();
+//always populate the table if it has to be created
+db.createTriplesTable(function(err,created){
+	if (created) db.populateBaseData();
+});
 
 
 app.set('port', (process.env.PORT || 5000));
