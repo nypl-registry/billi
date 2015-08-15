@@ -3,6 +3,6 @@ node_js:
   - "stable"
   - "iojs"
 env:
-- USER=travis
+- TRAVIS=travis
 before_script:
   - psql -c 'create database billi;' -U postgres
