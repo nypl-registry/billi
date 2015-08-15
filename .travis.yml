@@ -5,4 +5,4 @@ node_js:
 env:
 - TRAVIS=travis
 before_script:
-  - psql -c 'create database billi;' -U postgres
+  - psql -c 'create database travis_ci_test;' -U postgres
