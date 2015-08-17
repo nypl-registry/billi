@@ -8,6 +8,8 @@ describe('DB', function () {
 
 	this.timeout(10000)
 
+	
+
 
 	before(function(done) {	
 		//drop the triple table and set the path to test data before we start
@@ -19,20 +21,22 @@ describe('DB', function () {
 			if (err){
 				if (err.code!='42P01') throw err				
 			}	
-			done()		
+
+			db.dropSearchTable(function(err){
+				if (err){
+					if (err.code!='42P01') throw err				
+				}	
+				done()		
+			})		
 		})
+
+
+
 
 	})
 
 
-	after(function(done) { 
-		db.dropTriplesTable(function(err){
-			if (err){
-				if (err.code!='42p01') throw err				
-			}
-			done()
-		})
-	});
+
 
 
 
@@ -48,6 +52,20 @@ describe('DB', function () {
 		})
 		
 	})
+
+	it('It should build the search table', function (done) {
+		db.createSearchTable(function(err,results){
+			results.should.equal(true);
+			db.testSearchTable(function(err,results){				
+				if (err) throw err;
+				results.rowCount.should.equal(0);
+				done()
+			})
+
+		})
+		
+	})
+
 
 
 	it('It should populate the test table', function (done) {
@@ -121,6 +139,45 @@ describe('DB', function () {
 	});
 
 
+	it('It should reindex the search table fullSearchReIndex', function (done) {
+		db.fullSearchReIndex(function(){
+			done()
+		})
+	});
+
+
+	it('It should return the hierarchy of a classmark returnClassmarkHierarchy', function (done) {
+		db.returnClassmarkHierarchy("give", function(hierarchy){
+			hierarchy[0].should.equal('History Other European')
+			hierarchy[3].should.equal('Bulgaria')
+			done()
+		})
+	});
+
+
+	
+	
+
+
+
+	after(function(done) { 
+
+			db.dropSearchTable(function(err){
+				if (err){
+					console.log(err)
+					if (err.code!='42P01') throw err				
+				}				
+				db.dropTriplesTable(function(err){
+					if (err){
+						console.log(err)
+						if (err.code!='42P01') throw err				
+					}	
+					done()	
+				})
+
+			})
+
+	});
 
 
 
