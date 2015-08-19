@@ -1,9 +1,9 @@
 var should = require('should')
 
 var app = {};
-var cache = require("../lib/cache.js")(app);
 var db = require("../lib/db.js")(app);
-
+var data = require("../lib/data.js")(app);
+var cache = require("../lib/cache.js")(app);
 
 
 
