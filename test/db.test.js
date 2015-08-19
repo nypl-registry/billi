@@ -1,7 +1,5 @@
 var should = require('should')
-var db = require("../lib/db.js");
-
-
+var db = require("../lib/db.js")();
 
 
 describe('DB', function () {
@@ -9,9 +7,10 @@ describe('DB', function () {
 	this.timeout(10000)
 
 	
+	before(function(done) {
 
+		db.init()
 
-	before(function(done) {	
 		//drop the triple table and set the path to test data before we start
 		db.billingsLoadDataZip               = __dirname + '/../data/billings.test.json.zip';
 		db.billingsLoadDataZipOutput         = __dirname + '/../data/billings.test.json';
@@ -30,14 +29,7 @@ describe('DB', function () {
 			})		
 		})
 
-
-
-
 	})
-
-
-
-
 
 
 	it('It should build the triples table', function (done) {
@@ -73,13 +65,13 @@ describe('DB', function () {
 			if (err) throw err;
 
 			//the counter from the method
-			results.should.equal(83)	
+			results.should.equal(87)	
 
 			db.countTriplesTable(function(err,results){		
 	
 				if (err) throw err;
 				//the acutal database
-				results.rows[0].count.should.equal('83')
+				results.rows[0].count.should.equal('87')
 				done()
 			})
 
@@ -104,7 +96,7 @@ describe('DB', function () {
 
 	it('It should return data specifc to a requested classmark - relatedMarksData', function (done) {
 		db.returnClassmark('GIV',function(err,classmarkData,relatedMarksData){
-			relatedMarksData.length.should.equal(25);
+			relatedMarksData.length.should.equal(29);
 			done()
 		})
 	});

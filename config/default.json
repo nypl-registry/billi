@@ -27,8 +27,22 @@
   	"*r-", 
   	"*rr-", 
   	"*rs-", 
-  	"*rb-"
+  	"*rb-",
+  	"*o-",
+  	"*p_",
+  	"mus_",
+  	"**"
+  ],
+
+  "ignoreBaseLevelClassmarkPrefixes" : [
+  	"*r-",
+  	"*rb-",
+  	"*rs-",
+  	"*rr-",
+  	"3-",
+  	"8-"
   ]
+
 
 
 }

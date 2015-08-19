@@ -2,21 +2,25 @@ var express = require('express');
 var app = express();
 
 
-var db = require('./lib/db.js');
-var rdf = require('./lib/rdf.js');
+var db = require('./lib/db.js')(app);
+var rdf = require('./lib/rdf.js')(app);
+var data = require('./lib/data.js')(app);
+var cache = require('./lib/cache.js')(app);
 
 
 //always populate the table if it has to be created
-db.createSearchTable(function(err,created){
-	db.createTriplesTable(function(err,created){
-		if (created) db.populateBaseData(function(){
+app.db.createSearchTable(function(err,created){
+	app.db.createTriplesTable(function(err,created){
+		if (created) app.db.populateBaseData(function(){
+			
+			//start indexing
+			app.db.fullSearchReIndex()
 
-			db.fullSearchReIndex()
-
+			//re run the cacheinfo
+			app.cache.startUp()
 		});
 	});
 })
-
 
 
 // db.returnClassmark('giv',function(err,data,relatedData){
@@ -31,11 +35,33 @@ app.use(express.static(__dirname + '/public'));
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-
+app.set('view options', {
+    open: '{%',
+    close: '%}'
+});
 
 
 app.get('/', function(request, response) {
   response.render('pages/index');
+});
+
+
+app.get('/api/search/:query', function(request, response) { 
+
+	
+	if (!request.params.query) request.params.query = "";
+	var query = request.params.query.trim();
+	if (query.length < 3){
+		response.setHeader('Content-Type', 'application/json');
+		response.send(JSON.stringify({ data: [] }));
+	}else{
+		data.apiReturnSearchResults(query, function(err,results){
+			response.setHeader('Content-Type', 'application/json');
+			response.send(JSON.stringify(results));
+		})
+	}
+
+
 });
 
 
@@ -67,22 +93,15 @@ app.get('/classmark/:classmark/:format', function(request, response) {
 					response.status(200).send(results);
 				})	
 			}
-
-
 		}else{
 			response.status(404).send('Classmark not found');
 		}	
-
 	});
-
-
-
 })
 
 
 //handle content negoatiaion and forwarding to /about
 app.get('/classmark/:classmark', function(request, response) { 
-
 	//send to the /about page if they are asking for html
 	if (request.accepts('text/html')) {
 		response.redirect(303,'/classmark/'+request.params.classmark+'/about');
