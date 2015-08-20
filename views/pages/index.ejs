@@ -35,6 +35,35 @@
   </div>
 
 
+  <div class="container">
+    <div class="row">
+      <div class="two columns">         
+        <span class="eyebrow"></span>
+        <span class="eyebrow-text">Browse Classmarks</span>
+      </div>
+      <div class="ten columns content-column">
+
+          <% for (var x in classificationsBaseLevel){  %>
+            <% console.log() %>
+
+            <% if (classificationsBaseLevel[x].classification === 'classification:billings'){ %>
+
+              <%  var billings = classificationsBaseLevel[x]; %>
+              <% include ../partials/classification_billings.ejs %>
+
+
+
+
+            <% }else{ %>
+
+            <% } %>
+
+          <% } %>
+
+      </div>
+    </div>
+  </div>
+
 
 
 <script id="search-results-template" type="text/template">

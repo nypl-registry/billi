@@ -1,0 +1,48 @@
+
+
+
+<div class="browse-classification">
+
+  <div class="browse-classification-title"><%=billings.prefLabel%></div>
+  <div class="browse-classification-note"><%=billings.note%></div>
+
+
+  <% var star = [], nonstar = []; %>
+
+  <% for (var classmark in billings.classmarks){ 
+    classmark = billings.classmarks[classmark]; 
+    if (classmark.hiddenLabel.search(/\*/)>-1){
+      star.push(classmark);
+    }else{
+      nonstar.push(classmark);
+    }
+  } %>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="six columns">     
+
+        <% for (var classmark in nonstar){ %>
+          <% classmark = nonstar[classmark]; %>
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.hiddenLabel%>/nt"> <%=classmark.hiddenLabel%></a> - <a href="/classmark/<%=classmark.hiddenLabel%>/nt"><%=classmark.prefLabel%></a></div>
+        <% } %>
+
+      </div>
+      <div class="six columns">
+
+        <% for (var classmark in star){ %>
+          <% classmark = star[classmark]; %>
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.hiddenLabel%>/nt"> <%=classmark.hiddenLabel%></a> - <a href="/classmark/<%=classmark.hiddenLabel%>/nt"><%=classmark.prefLabel%></a></div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+</div>
+

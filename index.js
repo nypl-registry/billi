@@ -23,10 +23,6 @@ app.db.createSearchTable(function(err,created){
 })
 
 
-// db.returnClassmark('giv',function(err,data,relatedData){
-// 	rdf.rows2rdf(data,'n3')
-// })
-
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -36,13 +32,24 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.set('view options', {
-    open: '{%',
-    close: '%}'
+    open: '<%',
+    close: '%>}'
+    //we are using standard open/close tags, in the _.template system we use <# #>
 });
 
 
 app.get('/', function(request, response) {
-  response.render('pages/index');
+
+	//get the browse data
+	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
+		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data)} );
+	
+	});
+
+
+
+
+	
 });
 
 
@@ -66,7 +73,6 @@ app.get('/api/search/:query', function(request, response) {
 
 
 app.get('/classmark/:classmark/:format', function(request, response) { 
-
 
 	//is there even data
 	db.returnClassmark(request.params.classmark,function(err,data,relatedData){
