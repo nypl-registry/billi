@@ -36,7 +36,7 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
 /*header stufff*/
 
 .header{
-  margin: 10px 10px 0 10px;
+  margin: 10px 10px 0 0;
 }
 .header .eight, .header .four{
     height: 50px;
@@ -61,6 +61,20 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
     display: block;
   }
 }
+
+
+.header-about-logo{
+  background-image: url(data:image/png;base64,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);
+  height: 50px;
+  width: 50px;
+  background-color: #FFF;
+  border-radius: 50px;
+  background-position-y: 2px;
+  background-repeat: no-repeat;
+}
+
+
+
 
 
 .hero{
@@ -221,6 +235,62 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
 }
 
 
+.classmark-page-hero {
+  background-color: #068A7F;
+}
+
+.classmark-page-hero h1, .classmark-page-hero h3{
+  margin-bottom: 0;
+
+}
+
+
+.classmark-page-hero-header{
+  color: white;
+  font-family:'MiloWeb';
+  padding-top: 10px;  
+  padding-bottom: 10px;
+}
+
+.classmark-page-content-column{
+  padding-top: 10px;
+  margin-bottom: 25px;
+  font-size: 1.1em;
+
+}
+.classmark-page-alt-row{
+
+
+}
+.classmark-page-alt-row:nth-child(odd){
+  background-color: whitesmoke;
+  
+}
+.classmark-page-alt-row a{
+  text-decoration: none !important;
+}
+
+.classmark-page-view-in-catalog{
+  font-size: 1.5em;
+  float: right;
+  margin-bottom: 30px;
+
+}
+
+
+.classmark-page-view-in-catalog::after{
+  font-family: "Icomoon";
+  font-size: 12px;
+  content: "r";
+  display: inline-block;
+  position: relative;
+  font-size: 1em;
+  color: #0095C8;
+  top: 4px;
+  left: 5px;
+}
+
+
 
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
@@ -375,7 +445,7 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
-  font-family: "KievitWeb", serif, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "KievitWeb", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #222; }
 
 
@@ -575,7 +645,7 @@ pre > code {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 th,
 td {
-  padding: 12px 15px;
+  padding: 4px 5px;
   text-align: left;
   border-bottom: 1px solid #E1E1E1; }
 th:first-child,

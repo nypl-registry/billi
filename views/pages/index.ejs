@@ -8,7 +8,6 @@
   <% include ../partials/nav.ejs %>
   <% include ../partials/hero.ejs %>
 
-  <div class="about-hero">
     <div class="container">
       <div class="row">
         <div class="two columns">
@@ -20,7 +19,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <div class="container">
     <div class="row">
@@ -46,7 +44,6 @@
       <div class="ten columns content-column">
 
           <% for (var x in classificationsBaseLevel){  %>
-            <% console.log() %>
 
             <% if (classificationsBaseLevel[x].classification === 'classification:billings'){ %>
 
@@ -72,7 +69,7 @@
 
   <# _.each(items,function(item,key,list){ #>
 
-    <a href="/classmark/<#=item.attributes.classmark#>/nt">
+    <a href="/classmark/<#=item.attributes.classmark#>">
       <div class="search-result-item">
         <div class="u-pull-right search-result-item-classmark"><#=item.attributes.classification#> - <#=item.attributes.classmark#></div>
         <# var hierarchy = item.attributes.label.split(' > '); #>

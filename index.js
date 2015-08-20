@@ -42,15 +42,10 @@ app.get('/', function(request, response) {
 
 	//get the browse data
 	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
-		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data)} );
-	
-	});
-
-
-
-
-	
+		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data)} );	
+	});	
 });
+
 
 
 app.get('/api/search/:query', function(request, response) { 
@@ -72,6 +67,76 @@ app.get('/api/search/:query', function(request, response) {
 });
 
 
+//handle content negoatiaion and forwarding to /about
+app.get('/classification/:classification', function(request, response) { 
+	//send to the /about page if they are asking for html
+	if (request.accepts('text/html')) {
+		response.redirect(303,'/classification/'+request.params.classmark+'/about');
+		return;
+	}
+	//otherwise try to accomdate their content negotation
+	db.returnClassmark(request.params.classmark,function(err,data,relatedData){
+		if (data){
+			if (request.accepts('text/n3') || request.accepts('text/plain')) {
+				rdf.rows2rdf(data,"nt",function(err,results){
+					response.type('text/n3');
+					response.status(200).send(results);
+				})
+			}else if (request.accepts('application/json') || request.accepts('application/ld+json')) {
+				rdf.rows2rdf(data,"jsonld",function(err,results){
+					response.type('application/ld+json');
+					response.status(200).send(results);
+				})				
+			}else if (request.accepts('text/turtle')) {
+				rdf.rows2rdf(data,"turtle",function(err,results){
+					response.type('text/turtle');
+					response.status(200).send(results);
+				})				
+			}
+		}else{
+			response.status(404).send('Classmark not found');
+		}
+	});
+});
+
+
+app.get('/classification/:classification/:format', function(request, response) { 
+	
+	console.log("HEre")
+	// //is there even data
+	// db.returnClassification(request.params.classification,function(err,data,relatedData){
+	// 	if (data){
+
+	// 		var format = request.params.format.toLowerCase()
+	// 		if (format==='about'){
+	// 			app.data.parseAboutPageData(data,relatedData,function(err,about){
+	// 				response.render('pages/about', { data: about } );
+	// 			})			
+	// 		}else if(format === 'nt' || format === 'n-triples'){
+	// 			rdf.rows2rdf(data,"nt",function(err,results){
+	// 				response.type('text/plain');
+	// 				response.status(200).send(results);
+	// 			})
+	// 		}else if(format === 'turtle'){
+	// 			rdf.rows2rdf(data,"turtle",function(err,results){
+	// 				response.type('text/turtle');
+	// 				response.status(200).send(results);
+	// 			})
+	// 		}else if(format.search('json') > -1){
+	// 			rdf.rows2rdf(data,"jsonld",function(err,results){
+	// 				response.type('application/json');
+	// 				response.status(200).send(results);
+	// 			})	
+	// 		}
+	// 	}else{
+	// 		response.status(404).send('Classmark not found');
+	// 	}	
+	// });
+})
+
+
+
+
 app.get('/classmark/:classmark/:format', function(request, response) { 
 
 	//is there even data
@@ -79,10 +144,10 @@ app.get('/classmark/:classmark/:format', function(request, response) {
 		if (data){
 
 			var format = request.params.format.toLowerCase()
-
-
 			if (format==='about'){
-
+				app.data.parseAboutPageData(data,relatedData,function(err,about){
+					response.render('pages/about', { data: about } );
+				})			
 			}else if(format === 'nt' || format === 'n-triples'){
 				rdf.rows2rdf(data,"nt",function(err,results){
 					response.type('text/plain');
@@ -137,6 +202,8 @@ app.get('/classmark/:classmark', function(request, response) {
 		}
 	});
 });
+
+
 
 
 
