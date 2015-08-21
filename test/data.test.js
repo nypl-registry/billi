@@ -53,43 +53,57 @@ describe('DATA Lib tests', function () {
 	// })
 
 
-	it('It should build related data object for the about page info object', function (done) {
 
-		db.returnClassmark('G',function(err,classmarkData,relatedMarksData){
-			var relatedDataLookup = data.relatedData2Obj(relatedMarksData);
-			should.exist(relatedDataLookup['class:gi'])
-			relatedDataLookup['class:gi'].hiddenLabel[0].should.equal('GI')
+	it('It should build rows from the cache to pass to the rdf eingin', function (done) {
+
+		data.returnClassificationAsRows('billings',function(err,results){
+	
+
+
 			done();
 		});
 
 	});
 
-	it('It should build about page info object', function (done) {
-
-		db.returnClassmark('GIV',function(err,classmarkData,relatedMarksData){
-
-			var aboutObj = data.parseAboutPageData(classmarkData,relatedMarksData, function(err,results){
-
-				results.changenote.length.should.be.above(0);
-
-				results.broaderHierarchy[0].subject.should.equal('class:g');
-				results.related[0].classmark.should.equal('*R-GIV');
-				results.broader[0].classmark.should.equal('GI');
-				results.narrower[0].classmark.should.equal('GIVB');
-				results.inScheme[0].should.equal('http://billi.nypl.org/classification/billings');
-				results.hiddenLabel[0].should.equal('GIV');
-				results.type[0].should.equal('http://www.w3.org/2004/02/skos/core#Concept');
-				results.prefLabel[0].should.equal( 'Balkan States. Balkan War');
-
-				done();
-
-			});
 
 
+	// it('It should build related data object for the about page info object', function (done) {
 
-		});
+	// 	db.returnClassmark('G',function(err,classmarkData,relatedMarksData){
+	// 		var relatedDataLookup = data.relatedData2Obj(relatedMarksData);
+	// 		should.exist(relatedDataLookup['class:gi'])
+	// 		relatedDataLookup['class:gi'].hiddenLabel[0].should.equal('GI')
+	// 		done();
+	// 	});
 
-	});
+	// });
+
+	// it('It should build about page info object', function (done) {
+
+	// 	db.returnClassmark('GIV',function(err,classmarkData,relatedMarksData){
+
+	// 		var aboutObj = data.parseAboutPageData(classmarkData,relatedMarksData, function(err,results){
+
+	// 			results.changenote.length.should.be.above(0);
+
+	// 			results.broaderHierarchy[0].subject.should.equal('class:g');
+	// 			results.related[0].classmark.should.equal('*R-GIV');
+	// 			results.broader[0].classmark.should.equal('GI');
+	// 			results.narrower[0].classmark.should.equal('GIVB');
+	// 			results.inScheme[0].should.equal('http://billi.nypl.org/classification/billings');
+	// 			results.hiddenLabel[0].should.equal('GIV');
+	// 			results.type[0].should.equal('http://www.w3.org/2004/02/skos/core#Concept');
+	// 			results.prefLabel[0].should.equal( 'Balkan States. Balkan War');
+
+	// 			done();
+
+	// 		});
+
+
+
+	// 	});
+
+	// });
 	
 
 	// it('It should build the base level navigation for classifications and store them in the cache', function (done) {
