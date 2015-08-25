@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <% include ../partials/nav_about.ejs %>
+  
+
+  <div class="classmark-page-hero">
+    <div class="container">
+      <div class="row">
+        <div class="ten columns classmark-page-hero-header">
+            <h1><%=data.hiddenLabel.join(",")%></h1>
+            <h3><%=data.prefLabel.join(",")%></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="classmark-page-padding-before-fields"></div>
+
+  <% if (data.note.length>0){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Note</span>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+                  <p>
+                    
+                    <%=data.note.join(",")%>
+
+                  </p>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <div class="container">
+    <div class="row">
+      <div class="two columns">         
+        <span class="eyebrow"></span>
+        <span class="eyebrow-text">First Level Classmarks</span>
+      </div>
+      <div class="ten columns content-column">
+
+
+          <% for (var x in classificationsBaseLevel){  %>
+
+            <%=classificationsBaseLevel[x].prefLabel=""%>
+            <%=classificationsBaseLevel[x].note=""%>
+
+            <% if (classificationsBaseLevel[x].classification === 'classification:billings'){ %>
+
+              <%  var billings = classificationsBaseLevel[x]; %>
+
+
+              <% include ../partials/classification_billings.ejs %>
+
+
+
+
+            <% }else{ %>
+
+            <% } %>
+
+          <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="classmark-page-padding-before-fields"></div>
+
+  <div class="container">
+    <div class="row">
+      <div class="two columns">         
+        <span class="eyebrow"></span>
+        <span class="eyebrow-text">Linked Data</span>
+      </div>
+      <div class="ten columns classmark-page-content-column">
+          <table class="u-full-width">
+            <tbody>
+              <tr class="classmark-page-alt-row">                  
+                  <td>rdf:type</td>
+                  <td><% if (data.type[0]){%><a href="<%=data.type[0]%>"><%=data.type[0]%></a><%}%></td>                  
+              </tr>            
+              <tr class="classmark-page-alt-row">                  
+                  <td>skos:inScheme</td>
+                  <td><% if (data.inScheme[0]){%><a href="<%=data.inScheme[0]%>"><%=data.inScheme[0]%></a><%}%></td>                  
+              </tr>    
+
+              <tr class="classmark-page-alt-row">                  
+                  <td>JSON-LD</td>
+                  <td><a href="json">View As JSON-LD</a></td>                  
+              </tr>   
+              <tr class="classmark-page-alt-row">                  
+                  <td>Trutle</td>
+                  <td><a href="turtle">View As Turtle</a></td>                  
+              </tr>   
+              <tr class="classmark-page-alt-row">                  
+                  <td>N-Triples</td>
+                  <td><a href="nt">View As N-Triples</a></td>                  
+              </tr>  
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+
+  <% if (data.changenote.length>0){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Change Log</span>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+          <table class="u-full-width">
+            <tbody>
+            <% for (var x in data.changenote){ %>             
+                <tr class="classmark-page-alt-row">                  
+                    <td><%=data.changenote[x]%></td>                  
+                </tr>            
+            <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+
+
+<script id="search-results-template" type="text/template">
+
+
+</script>
+
+</body>
+</html>

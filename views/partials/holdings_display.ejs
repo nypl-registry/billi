@@ -1,0 +1,16 @@
+
+<% if (holdingsCount < 10){ %>
+  No holdings found for this classmark.
+<% }else if (holdingsCount < 10){ %>
+  Less than ten resources.
+<% }else if (holdingsCount < 100){ %>
+  Dozens of resources.
+<% }else if (holdingsCount < 1000){ %>
+  Hundreds of resources.
+<% }else if (holdingsCount < 10000){ %>
+  Thousands of resources.
+<% }else if (holdingsCount < 100000){ %>
+  Tens of thousands of resources.
+<% }else if (holdingsCount < 1000000){ %>
+  Hundreds of thousands of resources.
+<% } %>

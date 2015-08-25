@@ -50,12 +50,14 @@
               <%  var billings = classificationsBaseLevel[x]; %>
               <% include ../partials/classification_billings.ejs %>
 
-
-
-
             <% }else{ %>
 
+              <%  var classification = classificationsBaseLevel[x]; %>
+              <% include ../partials/classification_other.ejs %>
+
             <% } %>
+
+            <div class="classmark-page-padding-before-fields"></div>
 
           <% } %>
 

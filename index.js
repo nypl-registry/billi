@@ -1,4 +1,8 @@
+var compression = require('compression')
 var express = require('express');
+var requestLib = require('request');
+
+
 var app = express();
 
 
@@ -23,10 +27,13 @@ app.db.createSearchTable(function(err,created){
 })
 
 
-
 app.set('port', (process.env.PORT || 5000));
 
+app.use(compression());
+
 app.use(express.static(__dirname + '/public'));
+
+
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -36,6 +43,8 @@ app.set('view options', {
     close: '%>}'
     //we are using standard open/close tags, in the _.template system we use <# #>
 });
+
+
 
 
 app.get('/', function(request, response) {
@@ -48,47 +57,28 @@ app.get('/', function(request, response) {
 
 
 
-app.get('/api/search/:query', function(request, response) { 
-
-	
-	if (!request.params.query) request.params.query = "";
-	var query = request.params.query.trim();
-	if (query.length < 3){
-		response.setHeader('Content-Type', 'application/json');
-		response.send(JSON.stringify({ data: [] }));
-	}else{
-		data.apiReturnSearchResults(query, function(err,results){
-			response.setHeader('Content-Type', 'application/json');
-			response.send(JSON.stringify(results));
-		})
-	}
-
-
-});
-
-
 //handle content negoatiaion and forwarding to /about
 app.get('/classification/:classification', function(request, response) { 
 	//send to the /about page if they are asking for html
 	if (request.accepts('text/html')) {
-		response.redirect(303,'/classification/'+request.params.classmark+'/about');
+		response.redirect(303,'/classification/'+request.params.classification+'/about');
 		return;
 	}
 	//otherwise try to accomdate their content negotation
-	db.returnClassmark(request.params.classmark,function(err,data,relatedData){
+	app.data.returnClassificationAsRows(request.params.classification,function(err,data,relatedData){
 		if (data){
 			if (request.accepts('text/n3') || request.accepts('text/plain')) {
-				rdf.rows2rdf(data,"nt",function(err,results){
+				app.rdf.rows2rdf(data,"nt",function(err,results){
 					response.type('text/n3');
 					response.status(200).send(results);
 				})
 			}else if (request.accepts('application/json') || request.accepts('application/ld+json')) {
-				rdf.rows2rdf(data,"jsonld",function(err,results){
+				app.rdf.rows2rdf(data,"jsonld",function(err,results){
 					response.type('application/ld+json');
 					response.status(200).send(results);
 				})				
 			}else if (request.accepts('text/turtle')) {
-				rdf.rows2rdf(data,"turtle",function(err,results){
+				app.rdf.rows2rdf(data,"turtle",function(err,results){
 					response.type('text/turtle');
 					response.status(200).send(results);
 				})				
@@ -102,36 +92,45 @@ app.get('/classification/:classification', function(request, response) {
 
 app.get('/classification/:classification/:format', function(request, response) { 
 	
-	console.log("HEre")
-	// //is there even data
-	// db.returnClassification(request.params.classification,function(err,data,relatedData){
-	// 	if (data){
+	//is there even data
+	app.data.returnClassificationAsRows(request.params.classification,function(err,data,relatedData){
+		if (data){
 
-	// 		var format = request.params.format.toLowerCase()
-	// 		if (format==='about'){
-	// 			app.data.parseAboutPageData(data,relatedData,function(err,about){
-	// 				response.render('pages/about', { data: about } );
-	// 			})			
-	// 		}else if(format === 'nt' || format === 'n-triples'){
-	// 			rdf.rows2rdf(data,"nt",function(err,results){
-	// 				response.type('text/plain');
-	// 				response.status(200).send(results);
-	// 			})
-	// 		}else if(format === 'turtle'){
-	// 			rdf.rows2rdf(data,"turtle",function(err,results){
-	// 				response.type('text/turtle');
-	// 				response.status(200).send(results);
-	// 			})
-	// 		}else if(format.search('json') > -1){
-	// 			rdf.rows2rdf(data,"jsonld",function(err,results){
-	// 				response.type('application/json');
-	// 				response.status(200).send(results);
-	// 			})	
-	// 		}
-	// 	}else{
-	// 		response.status(404).send('Classmark not found');
-	// 	}	
-	// });
+			var format = request.params.format.toLowerCase()
+			if (format==='about'){
+				app.data.parseAboutPageData(data,relatedData,function(err,about){
+
+					app.cache.get('classificationsBaseLevel',function(err,classificationsBaseLevel){
+						
+						if (!classificationsBaseLevel){
+							classificationsBaseLevel = {};
+						}else{
+							classificationsBaseLevel = JSON.parse(classificationsBaseLevel);
+						}
+						response.render('pages/about_classification', { data: about, classificationsBaseLevel: classificationsBaseLevel } );
+					});
+
+				})			
+			}else if(format === 'nt' || format === 'n-triples'){
+				app.rdf.rows2rdf(data.concat(relatedData),"nt",function(err,results){
+					response.type('text/plain');
+					response.status(200).send(results);
+				})
+			}else if(format === 'turtle'){
+				app.rdf.rows2rdf(data.concat(relatedData),"turtle",function(err,results){
+					response.type('text/turtle');
+					response.status(200).send(results);
+				})
+			}else if(format.search('json') > -1){
+				app.rdf.rows2rdf(data.concat(relatedData),"jsonld",function(err,results){
+					response.type('application/json');
+					response.status(200).send(results);
+				})	
+			}
+		}else{
+			response.status(404).send('Classmark not found');
+		}	
+	});
 })
 
 
@@ -146,20 +145,20 @@ app.get('/classmark/:classmark/:format', function(request, response) {
 			var format = request.params.format.toLowerCase()
 			if (format==='about'){
 				app.data.parseAboutPageData(data,relatedData,function(err,about){
-					response.render('pages/about', { data: about } );
+					response.render('pages/about_classmark', { data: about } );
 				})			
 			}else if(format === 'nt' || format === 'n-triples'){
-				rdf.rows2rdf(data,"nt",function(err,results){
+				rdf.rows2rdf(data.concat(relatedData),"nt",function(err,results){
 					response.type('text/plain');
 					response.status(200).send(results);
 				})
 			}else if(format === 'turtle'){
-				rdf.rows2rdf(data,"turtle",function(err,results){
+				rdf.rows2rdf(data.concat(relatedData),"turtle",function(err,results){
 					response.type('text/turtle');
 					response.status(200).send(results);
 				})
 			}else if(format.search('json') > -1){
-				rdf.rows2rdf(data,"jsonld",function(err,results){
+				rdf.rows2rdf(data.concat(relatedData),"jsonld",function(err,results){
 					response.type('application/json');
 					response.status(200).send(results);
 				})	
@@ -206,7 +205,74 @@ app.get('/classmark/:classmark', function(request, response) {
 
 
 
+app.get('/api/search/:query', function(request, response) { 
+	if (!request.params.query) request.params.query = "";
+	var query = request.params.query.trim();
+	if (query.length < 3){
+		response.setHeader('Content-Type', 'application/json');
+		response.send(JSON.stringify({ data: [] }));
+	}else{
+		data.apiReturnSearchResults(query, function(err,results){
+			response.setHeader('Content-Type', 'application/json');
+			response.send(JSON.stringify(results));
+		})
+	}
+});
 
+
+
+
+app.get('/api/classmark/:query', function(request, response) { 
+
+	if (!request.params.query) request.params.query = "";
+	var query = request.params.query.trim();
+
+	requestLib('http://' + process.env.SHADOWCAT_API + "/api/classmark/" + query, function (error, res, body) {
+	  	
+
+
+	  if (!error && response.statusCode == 200) {
+		response.setHeader('Content-Type', 'application/json');
+		response.send(body);
+	  }else{
+		response.setHeader('Content-Type', 'application/json');
+		response.send(JSON.stringify({ data : [] }));
+
+	  }
+
+
+	})
+
+
+
+});
+
+
+
+app.get('/api/lccrange/:query', function(request, response) { 
+
+	if (!request.params.query) request.params.query = "";
+	var query = request.params.query.trim();
+
+	requestLib('http://' + process.env.SHADOWCAT_API + "/api/lccrange/" + query, function (error, res, body) {
+	  	
+
+
+	  if (!error && response.statusCode == 200) {
+		response.setHeader('Content-Type', 'application/json');
+		response.send(body);
+	  }else{
+		response.setHeader('Content-Type', 'application/json');
+		response.send(JSON.stringify({ data : [] }));
+
+	  }
+
+
+	})
+
+
+
+});
 
 
 

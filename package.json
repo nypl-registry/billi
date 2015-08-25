@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "JSONStream": "^1.0.4",
+    "compression": "^1.5.2",
     "config": "^1.15.0",
     "ejs": "^2.3.1",
     "event-stream": "^3.3.1",
@@ -19,6 +20,7 @@
     "pg-query-stream": "^0.7.0",
     "rdf-ext": "^0.2.5",
     "redis": "^0.12.1",
+    "request": "^2.61.0",
     "rimraf": "^2.4.2",
     "snappy": "^4.0.0",
     "unzip": "^0.1.11"

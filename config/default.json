@@ -10,7 +10,10 @@
     "classification:" : "http://billi.nypl.org/classification/",
     "dbpedia:"        : "http://dbpedia.org/ontology/sequenceNumber",
     "xml:"            : "http://www.w3.org/2001/XMLSchema#",
-    "rdf:"            : "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    "rdf:"            : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "library:"		  : "http://purl.org/library/",
+    "lcc:"			  : "urn:x-nypl:lcc:",
+    "dewey:"		  : "urn:x-nypl:ddc:"
 
   },
 

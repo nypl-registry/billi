@@ -139,7 +139,9 @@ describe('DB', function () {
 
 
 	it('It should return the hierarchy of a classmark returnClassmarkHierarchy', function (done) {
-		db.returnClassmarkHierarchy("give", function(hierarchy){
+	
+
+		db.returnClassmarkHierarchy("give", false, function(hierarchy){
 			hierarchy[0].should.equal('History Other European')
 			hierarchy[3].should.equal('Bulgaria')
 			done()

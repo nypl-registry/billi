@@ -34,6 +34,27 @@
 
   <% } %>
 
+  <div class="classmark-page-padding-before-fields"></div>
+
+
+  <% if (data.holdingsCount){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Holdings Count</span>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+                   
+                    <% var holdingsCount = parseInt(data.holdingsCount)%>
+
+                    <% include ../partials/holdings_display.ejs%>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+
   <% if (data.note.length>0){ %>
     <div class="container">
       <div class="row">
@@ -91,8 +112,8 @@
             <tbody>
             <% for (var x in data.narrower){ %>             
                 <tr class="classmark-page-alt-row">                  
-                    <td><a href="/classmark/<%=data.narrower[x].classmark%>"><%=data.narrower[x].classmark%></a></td>
-                    <td><a href="/classmark/<%=data.narrower[x].classmark%>"><%=data.narrower[x].prefLabel%></a></td>                  
+                    <td><a href="/classmark/<%=data.narrower[x].classmarkUrlSafe%>"><%=data.narrower[x].classmark%></a></td>
+                    <td><a href="/classmark/<%=data.narrower[x].classmarkUrlSafe%>"><%=data.narrower[x].prefLabel%></a></td>                  
                 </tr>            
             <% } %>
             </tbody>
@@ -114,8 +135,8 @@
             <tbody>
             <% for (var x in data.related){ %>             
                 <tr class="classmark-page-alt-row">                  
-                    <td><a href="/classmark/<%=data.related[x].classmark%>"><%=data.related[x].classmark%></a></td>
-                    <td><a href="/classmark/<%=data.related[x].classmark%>"><%=data.related[x].prefLabel%></a></td>                  
+                    <td><a href="/classmark/<%=data.related[x].classmarkUrlSafe%>"><%=data.related[x].classmark%></a></td>
+                    <td><a href="/classmark/<%=data.related[x].classmarkUrlSafe%>"><%=data.related[x].prefLabel%></a></td>                  
                 </tr>            
             <% } %>
             </tbody>
@@ -124,6 +145,102 @@
       </div>
     </div>
   <% } %>
+
+  <% if (data.mappingDdc.length>0 || data.mappingLcc.length>0 || data.mappingLccRange.length>0){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Mappings</span>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+          <table class="u-full-width">
+            <tbody>
+
+
+
+            <% for (var x in data.mappingLcc){ %>             
+                <tr class="classmark-page-alt-row">                  
+                    <td>Library of Congresss LCC</td>
+                    <td><%=data.mappingLcc[x]%></td>                  
+                </tr>            
+            <% } %>
+
+            <% for (var x in data.mappingLccRange){ %>             
+                <tr class="classmark-page-alt-row">              
+
+
+                    <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/billings')>-1){ %>
+                      <td>Library of Congresss LCC Range</td>
+                    <% } %>
+                    <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/lccrange')>-1){ %>
+                      <td>Related Billings</td>
+                    <% } %>
+
+
+
+                    
+                    <td><a href="/classmark/<%=data.mappingLccRange[x].classmark%>"><%=data.mappingLccRange[x].prefLabel%></a></td>                  
+                </tr>            
+            <% } %>
+
+
+            <% for (var x in data.mappingDdc){ %>             
+                <tr class="classmark-page-alt-row">                  
+                    <td>Dewey Decimal</td>
+                    <td><%=data.mappingDdc[x]%></td>                  
+                </tr>            
+            <% } %>
+
+
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+
+
+  <% if (parseInt(data.holdingsCount)>0){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Sample Resources</span>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+          <table class="u-full-width" id="sample-resources">
+            <tbody>
+
+            <script>
+
+
+              document.addEventListener("DOMContentLoaded", function() {
+
+                <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/billings')>-1){ %>
+                  window.billi.findClassmarks("<%=data.hiddenLabel[0]%>");
+                <% } %>
+                <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/lccrange')>-1){ %>
+                  window.billi.findLccRange("<%=data.hiddenLabel[0]%>");
+                <% } %>
+              });
+
+
+            </script>
+
+
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+
+  <hr>
 
 
   <div class="container">
@@ -149,7 +266,7 @@
                   <td><a href="json">View As JSON-LD</a></td>                  
               </tr>   
               <tr class="classmark-page-alt-row">                  
-                  <td>Trutle</td>
+                  <td>Turtle</td>
                   <td><a href="turtle">View As Turtle</a></td>                  
               </tr>   
               <tr class="classmark-page-alt-row">                  
@@ -187,8 +304,24 @@
 
 
 
-<script id="search-results-template" type="text/template">
+<script id="sample-resources-template" type="text/template">
 
+
+  <# _.each(items,function(item,key,list){ #>
+
+    <tr class="classmark-page-alt-row">
+      <td><#=item.attributes['publish-year']#></td>
+      <td class="sample-resources-title"><a target="_blank" href="http://catalog.nypl.org/record=b<#=item.id#>"><#=item.attributes.title#></a></td>
+    <# console.log(item) #>
+    </tr>
+  <# }); #>
+  
+
+  <# if (items.length==0){ #>
+    <div class="search-result-item">
+      No Results
+    </div>
+  <# } #>
 
 </script>
 

@@ -45,7 +45,7 @@
 				    searchTimeout = window.setTimeout(function(){
 				    	if (searchEl.value.length<3) return false;				    	
 				    	self.search(searchEl.value);
-				    },100)
+				    },300)
 
 
 
@@ -94,8 +94,89 @@
 
 
 
-		}
+		},
 
+		findClassmarks: function(query){
+
+
+
+			var self = this;
+
+			var request = new XMLHttpRequest();
+			request.open('GET', '/api/classmark/' + query, true);
+
+			request.onload = function() {
+			  if (request.status >= 200 && request.status < 400) {
+			    // Success!
+			    var data = JSON.parse(request.responseText);
+
+
+			    var template = document.getElementById("sample-resources-template").innerHTML;
+			   
+			   
+
+
+			    template = _.template(template);
+
+				document.getElementById("sample-resources").innerHTML = template({items: data.data });
+
+
+
+			  } else {
+			    // We reached our target server, but it returned an error
+
+			  }
+			};
+
+			request.onerror = function() {
+			  // There was a connection error of some sort
+			};
+
+			request.send();
+
+
+		},
+
+		findLccRange: function(query){
+
+
+
+			var self = this;
+
+			var request = new XMLHttpRequest();
+			request.open('GET', '/api/lccrange/' + query, true);
+
+			request.onload = function() {
+			  if (request.status >= 200 && request.status < 400) {
+			    // Success!
+			    var data = JSON.parse(request.responseText);
+
+
+			    var template = document.getElementById("sample-resources-template").innerHTML;
+			   
+			   
+
+
+			    template = _.template(template);
+
+				document.getElementById("sample-resources").innerHTML = template({items: data.data });
+
+
+
+			  } else {
+			    // We reached our target server, but it returned an error
+
+			  }
+			};
+
+			request.onerror = function() {
+			  // There was a connection error of some sort
+			};
+
+			request.send();
+
+
+		}
 
 
 	}
@@ -105,9 +186,11 @@
 
 	document.addEventListener("DOMContentLoaded", function() {
 	  
-	  billi.searchTemplate = document.getElementById("search-results-template").innerHTML,
-	  billi.searchResults = document.getElementById("search-results")
+	  if (document.getElementById("search-results-template")) billi.searchTemplate = document.getElementById("search-results-template").innerHTML;
+	  billi.searchResults = document.getElementById("search-results");
 	  billi.bindSearch();
+
+	  window.billi = billi;
 
 
 	});

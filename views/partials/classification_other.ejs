@@ -1,0 +1,55 @@
+
+
+
+<div class="browse-classification">
+
+  <div class="browse-classification-title"><%=classification.prefLabel%></div>
+  <div class="browse-classification-note"><%=classification.note%></div>
+
+  <% 
+
+    var leftSide = {}, rightSide = {}, total = Object.keys(classification.classmarks).length;
+
+
+    for (var x in classification.classmarks){
+
+      if (Object.keys(leftSide).length < total/2){
+        leftSide[x] = classification.classmarks[x]
+      }else{
+        rightSide[x] = classification.classmarks[x]
+      }
+
+
+    }
+
+
+
+  %>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="six columns">     
+
+        <% for (var classmark in leftSide){ %>
+          <% classmarkObj = leftSide[classmark]; %>
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','')  %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> - <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
+        <% } %>
+
+      </div>
+      <div class="six columns">
+
+        <% for (var classmark in rightSide){ %>
+          <% classmarkObj = rightSide[classmark]; %>
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','') %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> - <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
