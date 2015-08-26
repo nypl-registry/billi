@@ -282,6 +282,24 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
   line-height: 1em;
 }
 
+.experimental{
+  margin-top: 2px;
+  margin-left: 3px;
+  
+
+}
+
+.experimental::before{
+  font-family: "Icomoon";
+  font-size: 12px;
+  content: "c";
+  display: inline-block;
+  position: relative;
+  font-size: 1em;
+  color: #CC1A16;
+  top: 2px;
+  left: -2px;
+}
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
   from {
