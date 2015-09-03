@@ -64,9 +64,9 @@ var sess = {
     cookie: {}
 }
 
-if (process.env.NODE_ENV === 'production') {
-  sess.cookie.secure = true // serve secure cookies
-}
+// if (process.env.NODE_ENV === 'production') {
+//   sess.cookie.secure = true // serve secure cookies
+// }
 
 
 app.use(session(sess));
