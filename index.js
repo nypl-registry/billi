@@ -56,21 +56,26 @@ app.set('view options', {
 app.use(cookieParser());
 app.use(methodOverride());
 
-app.use(session({
+var sess = {
     store: new RedisStore({client : app.cache.client }),
     secret: 'test',
     resave : false,
     saveUninitialized: false,
     cookie: {}
-}));
+}
+
+if (process.env.ENV === 'production') {
+  sess.cookie.secure = true // serve secure cookies
+}
+
+
+app.use(session(sess));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-if (process.env.ENV === 'production') {
-  sess.cookie.secure = true // serve secure cookies
-}
+
 
 
 passport.serializeUser(function(user, done) {
@@ -342,7 +347,7 @@ app.get('/api/wikidata/:query', function(request, response) {
 	var query = request.params.query.trim();
 	requestLib('https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+query+'&language=en&limit=10&format=json', function (error, res, body) {
 	  
-	
+
 	  if (!error && response.statusCode == 200) {
 		response.setHeader('Content-Type', 'application/json');
 		response.send(body);
