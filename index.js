@@ -1,10 +1,18 @@
 var compression = require('compression')
 var express = require('express');
 var requestLib = require('request');
+var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
+var methodOverride = require('method-override');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 
 var app = express();
 
+console.log(passport);
 
 var db = require('./lib/db.js')(app);
 var rdf = require('./lib/rdf.js')(app);
@@ -45,13 +53,74 @@ app.set('view options', {
 });
 
 
+app.use(cookieParser());
+app.use(methodOverride());
+
+app.use(session({
+    store: new RedisStore({client : app.cache.client }),
+    secret: 'test',
+    resave : false,
+    saveUninitialized: false,
+    cookie: {}
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+if (process.env.ENV === 'production') {
+  sess.cookie.secure = true // serve secure cookies
+}
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+
+	var user = { domain : false, name: false, image: false, email: false};
+	if (obj._json){
+		if (obj._json.displayName) user.name = obj._json.displayName
+		if (obj._json.image) user.image = obj._json.image.url
+		if (obj._json.domain) user.domain = obj._json.domain	
+		if (obj._json.emails) if (obj._json.emails[0]) if (obj._json.emails[0].value) user.email = obj._json.emails[0].value	
+	}
+	done(null, user);
+});
+
+
+
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:5000/auth/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's Google profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Google account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+
+
+
+
 
 
 app.get('/', function(request, response) {
 
+	console.log(request.user)
 	//get the browse data
 	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
-		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data)} );	
+		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data), user: request.user} );	
 	});	
 });
 
@@ -107,7 +176,7 @@ app.get('/classification/:classification/:format', function(request, response) {
 						}else{
 							classificationsBaseLevel = JSON.parse(classificationsBaseLevel);
 						}
-						response.render('pages/about_classification', { data: about, classificationsBaseLevel: classificationsBaseLevel } );
+						response.render('pages/about_classification', { data: about, classificationsBaseLevel: classificationsBaseLevel, user: request.user } );
 					});
 
 				})			
@@ -145,7 +214,7 @@ app.get('/classmark/:classmark/:format', function(request, response) {
 			var format = request.params.format.toLowerCase()
 			if (format==='about'){
 				app.data.parseAboutPageData(data,relatedData,function(err,about){
-					response.render('pages/about_classmark', { data: about } );
+					response.render('pages/about_classmark', { data: about, user: request.user } );
 				})			
 			}else if(format === 'nt' || format === 'n-triples'){
 				rdf.rows2rdf(data.concat(relatedData),"nt",function(err,results){
@@ -256,29 +325,73 @@ app.get('/api/lccrange/:query', function(request, response) {
 
 	requestLib('http://' + process.env.SHADOWCAT_API + "/api/lccrange/" + query, function (error, res, body) {
 	  	
-
-
 	  if (!error && response.statusCode == 200) {
 		response.setHeader('Content-Type', 'application/json');
 		response.send(body);
 	  }else{
 		response.setHeader('Content-Type', 'application/json');
 		response.send(JSON.stringify({ data : [] }));
-
 	  }
-
-
 	})
+});
 
 
 
+app.get('/api/wikidata/:query', function(request, response) { 
+	if (!request.params.query) request.params.query = "";
+	var query = request.params.query.trim();
+	requestLib('https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+query+'&language=en&limit=10&format=json', function (error, res, body) {
+	  
+	
+	  if (!error && response.statusCode == 200) {
+		response.setHeader('Content-Type', 'application/json');
+		response.send(body);
+	  }else{
+		response.setHeader('Content-Type', 'application/json');
+		response.send('{"searchinfo":{"search":"asdfasdf"},"search":[],"success":1}');
+	  }
+	});
 });
 
 
 
 
+app.get('/login',
+	passport.authenticate('google', { scope: ['email'] }),
+	function(request, response){
+	// The request will be redirected to Google for authentication, so this
+	// function will not be called.
+});
+
+app.get('/auth/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+
+  function(request, response) {
+  	//if they used a non nypl domain
+  	if (request.user){
+  		if (request.user._json.domain === 'nypl.org'){
+  			response.redirect('/');
+  			return true;
+  		}
+  	}
+  	response.redirect('/nonstafflogin');    
+  });
+
+
+app.get('/nonstafflogin', function(request, response){
+	request.logout();
+	response.render('pages/non_staff_login', { user: request.user } );	
+});
+
+
+app.get('/logout', function(request, response){
+  request.logout();
+  response.redirect('/');
+});
+
+
 app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+	console.log('Node app is running on port', app.get('port'));
 });
 
 

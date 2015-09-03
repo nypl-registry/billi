@@ -55,8 +55,20 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
   background-repeat: no-repeat;
 }
 
+.user-info img{
+  height: 25px;
+  width: auto;
 
+}
+.user-info a{
+  text-decoration: none;
+  line-height: 25px;
+  height: 25px;
+  font-size: 0.85em;
+  padding-left: 10px;
+  padding-top: 3px;
 
+}
 
 
 .hero{
@@ -326,6 +338,12 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
   top: 2px;
   left: -2px;
 }
+
+#wikipedia-connect-header{
+  margin-bottom: 10px;
+}
+
+
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
   from {

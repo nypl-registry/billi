@@ -2,9 +2,26 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+
+  <script>
+
+  <% if (data.prefLabel) { %>
+
+    <% if (data.prefLabel[0]) { %>
+
+      var classmarkPrefLabel = "<%=data.prefLabel[0]%>"; 
+
+    <% } %>
+
+  <% } %>
+
+
+  </script>
+
 </head>
 
 <body>
+
   <% include ../partials/nav_about.ejs %>
   
 
@@ -179,9 +196,7 @@
                       <td>Related Billings</td>
                     <% } %>
 
-
-
-                    
+                   
                     <td><a href="/classmark/<%=data.mappingLccRange[x].classmark%>"><%=data.mappingLccRange[x].prefLabel%></a></td>                  
                 </tr>            
             <% } %>
@@ -201,6 +216,40 @@
         </div>
       </div>
     </div>
+  <% } %>
+
+
+
+  <% if (user){ %>
+
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Connect To Wikipedia</span>
+
+          <div class="experimental">Experimental</div>
+        </div>
+        <div class="ten columns classmark-page-content-column">
+
+          <div id="wikipedia-connect-header" class="wikipedia-connect-row classmark-page-alt-row">Connecting to WikiData...</div>
+          <div id="wikipedia-connect-search">
+            <input class="u-full-width" placeholder="Or, search Wikidata using your own terms." id="search-input" type="search">
+          </div>
+
+          <table class="u-full-width" id="wikipedia-connect-list-has-description">
+
+
+          </table>
+
+
+          <table class="u-full-width" id="wikipedia-connect-list-no-description">
+
+          </table>        
+        </div>
+      </div>
+    </div>
+
   <% } %>
 
 
@@ -323,7 +372,7 @@
     <tr class="classmark-page-alt-row">
       <td><#=item.attributes['publish-year']#></td>
       <td class="sample-resources-title"><a target="_blank" href="http://catalog.nypl.org/record=b<#=item.id#>"><#=item.attributes.title#></a></td>
-    <# console.log(item) #>
+    
     </tr>
   <# }); #>
   
@@ -335,6 +384,21 @@
   <# } #>
 
 </script>
+
+
+
+<script id="wikipedia-connect-template" type="text/template">
+
+
+    <tr class="wikipedia-connect-row">
+      <td><#=item.label#></td>
+      <td class="sample-resources-title"><a target="_blank" href="<#=item.url#>"><#=(item.description) ? item.description : item.title #></a></td>
+    </tr>
+  
+
+</script>
+
+
 
 </body>
 </html>

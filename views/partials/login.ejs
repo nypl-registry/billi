@@ -1,0 +1,15 @@
+
+
+
+<% if (user){ %>
+	
+	<% if (user.image){ %>
+
+		<img src="<%=user.image%>" title="<%=(user.name) ? user.name : ""%>" alt="<%=(user.name) ? user.name : ""%>" >
+		<a href="/logout">Logout</a>
+
+	<% } %>
+
+<% }else{ %>
+	<a class="u-pull-right" href="/login/">Staff Login</a></div>
+<% } %>
