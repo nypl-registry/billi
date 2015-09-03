@@ -122,6 +122,7 @@ passport.use(new GoogleStrategy({
 
 app.get('/', function(request, response) {
 
+	console.log(request.user)
 	
 	//get the browse data
 	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
