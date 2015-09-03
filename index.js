@@ -12,7 +12,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var app = express();
 
-console.log(passport);
+
 
 var db = require('./lib/db.js')(app);
 var rdf = require('./lib/rdf.js')(app);
@@ -100,7 +100,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: (process.env.ENV==='production') ? "https://billi.herokuapp.com/auth/callback" : "http://localhost:5000/auth/callback"
+    callbackURL: (process.env.NODE_ENV==='production') ? "https://billi.herokuapp.com/auth/callback" : "http://localhost:5000/auth/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
