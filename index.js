@@ -369,10 +369,11 @@ app.get('/login',
 });
 
 app.get('/auth/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/' }),
 
   function(request, response) {
   	//if they used a non nypl domain
+  	console.log(request.user)
   	if (request.user){
   		if (request.user._json.domain === 'nypl.org'){
   			response.redirect('/');
