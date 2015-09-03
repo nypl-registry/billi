@@ -64,7 +64,7 @@ var sess = {
     cookie: {}
 }
 
-if (process.env.ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   sess.cookie.secure = true // serve secure cookies
 }
 
@@ -122,7 +122,7 @@ passport.use(new GoogleStrategy({
 
 app.get('/', function(request, response) {
 
-	console.log(request.user)
+	
 	//get the browse data
 	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
 		response.render('pages/index', { classificationsBaseLevel: JSON.parse(data), user: request.user} );	
