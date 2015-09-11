@@ -33,7 +33,7 @@
 
         <% for (var classmark in leftSide){ %>
           <% classmarkObj = leftSide[classmark]; %>
-           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','')  %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> - <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','')  %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> <%=(classmarkObj.prefLabel) ? "-" : ""%> <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
         <% } %>
 
       </div>
@@ -41,7 +41,10 @@
 
         <% for (var classmark in rightSide){ %>
           <% classmarkObj = rightSide[classmark]; %>
-           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','') %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> - <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
+
+
+
+           <div class="browse-classification-item"><a href="/classmark/<%=classmark.replace('class:','') %>"> <%=classmarkObj.hiddenLabel.replace('1-10000','')%></a> <%=(classmarkObj.prefLabel) ? "-" : ""%> <a href="/classmark/<%=classmark.replace('class:','')%>"><%=classmarkObj.prefLabel%></a></div>
         <% } %>
 
       </div>

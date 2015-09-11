@@ -104,14 +104,13 @@
 
           <% for (var x in data.broaderHierarchy){ %>
             <% if (x > 0){ %>
-              <div class="search-result-item-level" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].hiddenLabel%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
+              <div class="search-result-item-level" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
             <% }else{ %>
-              <div class="search-result-item-level-first" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].hiddenLabel%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
+              <div class="search-result-item-level-first" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
             <% } %>
           <% } %>
 
-          <div class="search-result-item-level" style="padding-left:<%=data.broaderHierarchy.length*3%>%"><%=data.prefLabel.join(",")%></div>
-
+          <div class="search-result-item-level" style="padding-left:<%=data.broaderHierarchy.length*3%>%"><%=(data.prefLabel.length>0) ? data.prefLabel.join(",") : data.hiddenLabel.join(",") %></div>
 
 
         </div>
@@ -189,11 +188,13 @@
                 <tr class="classmark-page-alt-row">              
 
 
-                    <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/billings')>-1){ %>
-                      <td>Library of Congresss LCC Range</td>
-                    <% } %>
+
                     <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/lccrange')>-1){ %>
                       <td>Related Billings</td>
+                    <% }else{ %>
+                      <td>Library of Congresss LCC Range</td>
+
+
                     <% } %>
 
                    

@@ -122,7 +122,7 @@ passport.use(new GoogleStrategy({
 
 app.get('/', function(request, response) {
 
-	console.log(request.user)
+	
 	
 	//get the browse data
 	var browseJson = app.cache.get('classificationsBaseLevel',function(err,data){
@@ -374,7 +374,7 @@ app.get('/auth/callback',
 
   function(request, response) {
   	//if they used a non nypl domain
-  	console.log(request.user)
+  	
   	if (request.user){
   		if (request.user._json.domain === 'nypl.org'){
   			response.redirect('/');

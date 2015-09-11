@@ -53,17 +53,21 @@
             <%=classificationsBaseLevel[x].prefLabel=""%>
             <%=classificationsBaseLevel[x].note=""%>
 
-            <% if (classificationsBaseLevel[x].classification === 'classification:billings'){ %>
+            <% if (data.uri === classificationsBaseLevel[x].classification) { %>
 
-              <%  var billings = classificationsBaseLevel[x]; %>
+              <% if (classificationsBaseLevel[x].classification === 'classification:billings'){ %>
 
-
-              <% include ../partials/classification_billings.ejs %>
-
-
+                <%  var billings = classificationsBaseLevel[x]; %>
+                <% include ../partials/classification_billings.ejs %>
 
 
-            <% }else{ %>
+              <% }else{ %>
+
+                <%  var classification = classificationsBaseLevel[x]; %>
+                <% include ../partials/classification_other.ejs %>
+
+
+              <% } %>
 
             <% } %>
 
