@@ -360,6 +360,28 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
   left: -2px;
 }
 
+.wikipedia-connect-disconnect{ 
+  text-decoration: none;
+  color: red !important;
+
+}
+.wikipedia-connect-disconnect:before{
+  font-family: "NyplIcon";
+  font-size: 12px;
+  content: "";
+  display: inline;
+  position: relative;
+  font-size: 1em;
+  color: red;
+  top: 2px;
+  left: -2px;
+}
+
+#wikipedia-connect-show{
+  display: none;
+
+}
+
 .staff-action{
   background-color: antiquewhite;
   padding: 5px;

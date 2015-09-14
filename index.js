@@ -435,19 +435,54 @@ app.get('/connect/:classmark/to/:wikiEntity', function(request, response, next) 
 		
 		var agent = request.user.name + ' (' + request.user.email + ')';
 
-		app.wiki.process(request.params.classmark,request.params.wikiEntity, agent,function(err,results){
+
+		if (request.params.wikiEntity === 'null'){
+
+			app.wiki.setToNull(request.params.classmark, agent,function(err,results){
+
+				if (err){
+					response.status(500).send("Problems! " + err);
+				}else{
+					response.redirect(request.get('Referrer')); 
+				}
+				
+			});
+
+		}else{
+			app.wiki.process(request.params.classmark,request.params.wikiEntity, agent,function(err,results){
+
+				if (err){
+					response.status(500).send("Problems! " + err);
+				}else{
+					response.redirect(request.get('Referrer')); 
+				}
+			});
+		}
+
+
+
+
+	}else{
+		response.status(401).send("You are not logged in.");
+	}
+
+
+});
+
+app.get('/disconnect/:classmark/from/wiki', function(request, response, next) {
+	
+	if (request.user){
+		
+		var agent = request.user.name + ' (' + request.user.email + ')';
+
+		app.wiki.disconnect(request.params.classmark, agent,function(err,results){
 
 			if (err){
 				response.status(500).send("Problems! " + err);
 			}else{
 				response.redirect(request.get('Referrer')); 
 			}
-
-
 		})
-
-
-
 	}else{
 		response.status(401).send("You are not logged in.");
 	}

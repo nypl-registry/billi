@@ -122,11 +122,22 @@
 
           <% }else{ %>
 
-            <p>
 
+
+            <div class="wikidata-abstract" id="wikidata-abstract">
               <%=data.wikiAbstract%>
+            </div> 
 
-            </p>
+
+            <div>
+
+                <a href="#" id="wikidata-abstract-actions-expand-link"><div class="wikidata-abstract-actions-expand">Expand</div></a>
+                <a target="_blank" href="<%=data.wikiUrl%>"><div class="wikidata-abstract-actions-wikipedia">From Wikipedia</div></a>
+
+            </div>
+
+
+      
 
 
           <% } %>
@@ -339,20 +350,68 @@
         </div>
         <div class="ten columns classmark-page-content-column">
 
-          <div id="wikipedia-connect-header" class="wikipedia-connect-row classmark-page-alt-row">Connecting to WikiData...</div>
-          <div id="wikipedia-connect-search">
-            <input class="u-full-width" placeholder="Or, search Wikidata using your own terms." id="search-input" type="search">
-          </div>
-
-          <table class="u-full-width" id="wikipedia-connect-list-has-description">
+          <% if (data.wikiUrl) { %>
 
 
-          </table>
+            <div>
+              
+                <div>This classmark already has a wiki connection. Do you want to <a href="#" id="wikipedia-connect-show-link">edit or add more</a>?</div>
 
 
-          <table class="u-full-width" id="wikipedia-connect-list-no-description">
+                <div id="wikipedia-connect-show">
 
-          </table>        
+
+                    <div id="wikipedia-connect-header" class="wikipedia-connect-row classmark-page-alt-row">Connecting to WikiData...</div>
+                    <div id="wikipedia-connect-search">
+                      <input class="u-full-width" placeholder="Or, search Wikidata using your own terms." id="search-input" type="search">
+                    </div>
+
+                    <table class="u-full-width" id="wikipedia-connect-list-has-description">
+
+
+                    </table>
+
+
+                    <table class="u-full-width" id="wikipedia-connect-list-no-description">
+
+                    </table>             
+
+                    <br>
+
+                    <a class="wikipedia-connect-disconnect" href="/disconnect/<%=data.uri%>/from/wiki">Disonnect all Wiki mappings</a>
+
+
+                </div>
+
+            </div>
+
+
+
+          <% }else { %>
+
+            <div id="wikipedia-connect-container">
+              <div id="wikipedia-connect-header" class="wikipedia-connect-row classmark-page-alt-row">Connecting to WikiData...</div>
+              <div id="wikipedia-connect-search">
+                <input class="u-full-width" placeholder="Or, search Wikidata using your own terms." id="search-input" type="search">
+              </div>
+
+              <table class="u-full-width" id="wikipedia-connect-list-has-description">
+
+
+              </table>
+
+
+              <table class="u-full-width" id="wikipedia-connect-list-no-description">
+
+              </table>   
+
+              <br>
+
+              <a class="wikipedia-connect-disconnect" href="/connect/<%=data.uri%>/to/null">This classmark is not mappable. Do not ask to map it anymore. </a>
+            </div>
+          <% } %>
+
+               
         </div>
       </div>
     </div>
@@ -506,7 +565,7 @@
     <tr class="wikipedia-connect-row">
       <td><#=item.label#></td>
       <td class="sample-resources-title"><a target="_blank" href="<#=item.url#>"><#=(item.description) ? item.description : item.title #></a></td>
-      <td><a class="wikipedia-connect-row-connect" href="/connect/<#=classmarkUri#>/to/<#=item.url.split('wiki/')[1]#>">Connect</td>
+      <td><a class="wikipedia-connect-row-connect" href="/connect/<#=classmarkUri#>/to/<#=item.url.split('wiki/')[1]#>">Connect</a></td>
     </tr>
   
 

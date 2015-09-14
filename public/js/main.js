@@ -94,6 +94,8 @@
 
 		buildConnectToWikipedia: function(search,exact){
 
+			var self = this;
+
 			if (!exact) exact = false;
 
 			var s = [search];
@@ -121,6 +123,8 @@
 
 					}
 
+					self.bindWikipediaConnect();
+
 					
 					
 
@@ -128,6 +132,9 @@
 				})
 
 			}
+
+
+			
 
 
 
@@ -226,6 +233,64 @@
 
 			}
 		},
+
+		bindWikipediaShow: function(){
+
+
+			var el = document.getElementById('wikipedia-connect-show-link');
+			console.log(el)
+
+			if (el){
+
+				el.addEventListener("click", function(event){
+
+					
+
+					var elI = document.getElementById('wikipedia-connect-show');
+
+					if (elI){
+						elI.style['display'] = 'block';
+					}
+
+					event.returnValue = false;
+
+
+					el.parentNode.innerHTML = "";
+
+					return false;
+				});
+
+			}
+		},
+
+		bindWikipediaConnect: function(){
+
+
+			var els = document.getElementsByClassName('wikipedia-connect-row-connect');
+
+			for (var i = 0; i < els.length; ++i) {
+
+				var el = els[i];  
+
+				el.addEventListener("click", function(event){
+
+					
+
+					var elA = document.getElementById('wikipedia-connect-container');
+					elA.innerHTML = 'Making Wiki connection, please wait...';
+
+
+				});
+
+				item.innerHTML = 'this is value';
+			}
+
+
+		},
+
+
+
+
 
 
 
@@ -375,8 +440,9 @@
 
 	//check if the wikidata expand thing needs to happen
 	billi.bindClassmarkWikiAbstractExpand();
-
-	  window.billi = billi;
+	billi.bindWikipediaShow();
+	
+	window.billi = billi;
 
 
 	});
