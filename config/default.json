@@ -11,10 +11,13 @@
     "dbpedia:"        : "http://dbpedia.org/ontology/sequenceNumber",
     "xml:"            : "http://www.w3.org/2001/XMLSchema#",
     "rdf:"            : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs:"           : "http://www.w3.org/2000/01/rdf-schema#",
     "library:"		  : "http://purl.org/library/",
     "lcc:"			  : "urn:x-nypl:lcc:",
-    "dewey:"		  : "urn:x-nypl:ddc:"
-
+    "dewey:"		  : "urn:x-nypl:ddc:",
+    "wikidata:"   : "http://www.wikidata.org/entity/",
+    "dbpo:"        : "http://dbpedia.org/ontology/",
+    "dbpr:"        : "http://dbpedia.org/resource/"
   },
 
   "ignoreSearchClassmarkPrefixes" : [

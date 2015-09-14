@@ -341,9 +341,99 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
 
 #wikipedia-connect-header{
   margin-bottom: 10px;
+  padding: 5px;
+}
+
+.wikipedia-connect-row a{
+  text-decoration: none;
+}
+
+.wikipedia-connect-row-connect:before{
+  font-family: "NyplIcon";
+  font-size: 12px;
+  content: "";
+  display: inline;
+  position: relative;
+  font-size: 1em;
+  color: #0095C8;
+  top: 2px;
+  left: -2px;
+}
+
+.staff-action{
+  background-color: antiquewhite;
+  padding: 5px;
+  margin-bottom: 30px;
+}
+
+.wikidata-abstract{
+  max-height: 150px;
+  overflow: hidden;
+  border-bottom: solid 1px grey;
+  -moz-transition: 50s;
+  -ms-transition: 50s;
+  -o-transition: 50s;
+  -webkit-transition: 50s;
+  transition: 50s;
+
 }
 
 
+.wikidata-abstract-actions-expand:before{
+  font-family: "NyplIcon";
+  font-size: 12px;
+  content: "";
+  display: inline-block;
+  position: relative;
+  font-size: 1em;
+  color: #0095C8;
+  top: 2px;
+  left: -1px;
+}
+
+.wikidata-abstract-actions-expand{
+  font-size: 1em;  
+  float: left;
+}
+
+.wikidata-abstract-actions-wikipedia{
+  font-size: 1em;  
+  float: right;
+  padding-right: 5px;
+}
+.wikidata-abstract-actions-wikipedia:after{
+  font-family: "NyplIcon";
+  font-size: 12px;
+  content: "";
+  display: inline-block;
+  position: relative;
+  font-size: 1em;
+  color: #0095C8;
+  top: 2px;
+  left: 2px;
+}
+
+
+.wikidata-image{
+  text-align: center;
+}
+.wikidata-image img{
+  height: 150px;
+  width: auto;
+}
+
+.wikidata-image a{
+  font-size: 0.75em;
+  text-decoration: none;
+}
+
+#wikidata-image{
+  -moz-transition: 1s;
+  -ms-transition: 1s;
+  -o-transition: 1s;
+  -webkit-transition: 1s;
+  transition: 1s;
+}
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
   from {

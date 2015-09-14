@@ -18,18 +18,22 @@ var db = require('./lib/db.js')(app);
 var rdf = require('./lib/rdf.js')(app);
 var data = require('./lib/data.js')(app);
 var cache = require('./lib/cache.js')(app);
+var wiki = require('./lib/wiki.js')(app);
+
 
 
 //always populate the table if it has to be created
 app.db.createSearchTable(function(err,created){
-	app.db.createTriplesTable(function(err,created){
-		if (created) app.db.populateBaseData(function(){
-			
-			//start indexing
-			app.db.fullSearchReIndex()
+	app.db.createImagesTable(function(err,created){
+		app.db.createTriplesTable(function(err,created){
+			if (created) app.db.populateBaseData(function(){
+				
+				//start indexing
+				app.db.fullSearchReIndex()
 
-			//re run the cacheinfo
-			app.cache.startUp()
+				//re run the cacheinfo
+				app.cache.startUp()
+			});
 		});
 	});
 })
@@ -213,6 +217,8 @@ app.get('/classification/:classification/:format', function(request, response) {
 
 app.get('/classmark/:classmark/:format', function(request, response) { 
 
+
+
 	//is there even data
 	db.returnClassmark(request.params.classmark,function(err,data,relatedData){
 		if (data){
@@ -359,15 +365,22 @@ app.get('/api/wikidata/:query', function(request, response) {
 	});
 });
 
+app.get('/login', function(request, response) { 
+
+    passport.authenticate("google",
+    {
+        scope:
+        [
+            "email",
+        ],
+        state: new Buffer(JSON.stringify({referrer: request.get('Referrer')})).toString('base64')
+
+    })(request, response);
 
 
 
-app.get('/login',
-	passport.authenticate('google', { scope: ['email'] }),
-	function(request, response){
-	// The request will be redirected to Google for authentication, so this
-	// function will not be called.
 });
+
 
 app.get('/auth/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
@@ -377,7 +390,14 @@ app.get('/auth/callback',
   	
   	if (request.user){
   		if (request.user._json.domain === 'nypl.org'){
-  			response.redirect('/');
+
+  			var ref ="/";
+
+  			if (request.query.state){
+  				ref = JSON.parse(new Buffer(request.query.state, 'base64').toString('ascii'));
+  				ref = ref.referrer
+  			}
+  			response.redirect(ref);
   			return true;
   		}
   	}
@@ -392,9 +412,49 @@ app.get('/nonstafflogin', function(request, response){
 
 
 app.get('/logout', function(request, response){
-  request.logout();
-  response.redirect('/');
+	request.logout();
+	response.redirect('/');
 });
+
+app.get('/image/:classmark', function(request, response, next) {
+	app.db.argQuery('select * from images where subject = ($1) limit 1', [request.params.classmark],function(err, data) {
+		data = data.rows
+		if (err || data.length == 0){
+			response.status(404).send("Image not found");
+		}else{
+			response.writeHead(200, {'Content-Type': 'image/jpeg' });
+			response.end(data[0].image, 'binary');
+		}
+	});
+});
+
+
+app.get('/connect/:classmark/to/:wikiEntity', function(request, response, next) {
+	
+	if (request.user){
+		
+		var agent = request.user.name + ' (' + request.user.email + ')';
+
+		app.wiki.process(request.params.classmark,request.params.wikiEntity, agent,function(err,results){
+
+			if (err){
+				response.status(500).send("Problems! " + err);
+			}else{
+				response.redirect(request.get('Referrer')); 
+			}
+
+
+		})
+
+
+
+	}else{
+		response.status(401).send("You are not logged in.");
+	}
+
+
+});
+
 
 
 app.listen(app.get('port'), function() {

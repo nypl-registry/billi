@@ -8,9 +8,21 @@
   <% if (data.prefLabel) { %>
 
     <% if (data.prefLabel[0]) { %>
-
       var classmarkPrefLabel = "<%=data.prefLabel[0]%>"; 
+    <% }else{ %>
+      var classmarkPrefLabel = false; 
+    <% } %>
 
+    <% if (data.hiddenLabel[0]) { %>
+      var classmarkHiddenLabel = "<%=data.hiddenLabel[0]%>"; 
+    <% }else{ %>
+      var classmarkHiddenLabel = false; 
+    <% } %>
+
+    <% if (data.uri) { %>
+      var classmarkUri = "<%=data.uri%>"; 
+    <% }else{ %>
+      var classmarkUri = false; 
     <% } %>
 
   <% } %>
@@ -37,7 +49,17 @@
   </div>
 
 
-  <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/billings')>-1){ %>
+  <% 
+
+    var hasHoldings = false; 
+    if (data.holdingsCount) if (data.holdingsCount>0) hasHoldings = true;
+
+
+  %>
+
+
+
+  <% if ( (data.inScheme.indexOf('http://billi.nypl.org/classification/billings')>-1 || data.inScheme.indexOf('http://billi.nypl.org/classification/divisions')>-1 || data.inScheme.indexOf('http://billi.nypl.org/classification/fixedorder')>-1 ) && hasHoldings){ %>
 
     <div class="container">
       <div class="row">
@@ -54,7 +76,66 @@
   <% } %>
 
   <div class="classmark-page-padding-before-fields"></div>
+  <%console.log(data)%>
 
+  <% if (data.wikiAbstract){ %>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">         
+          <span class="eyebrow"></span>
+          <span class="eyebrow-text">Wiki</span>
+        </div>
+        <div class="ten columns">
+
+          <% if (data.wikiImage){ %>
+
+            <div class="container" style="width:100%">
+              <div class="row">
+                <div class="eight columns">
+
+                  <div class="wikidata-abstract" id="wikidata-abstract">
+                    <%=data.wikiAbstract%>
+                  </div> 
+
+                  <div>
+
+                      <a href="#" id="wikidata-abstract-actions-expand-link"><div class="wikidata-abstract-actions-expand">Expand</div></a>
+                      <a target="_blank" href="<%=data.wikiUrl%>"><div class="wikidata-abstract-actions-wikipedia">From Wikipedia</div></a>
+
+                  </div>
+
+
+                </div>
+                <div class="four columns wikidata-image">
+                          <% if (data.wikiImgUrl){ %>
+                            <a href="<%=data.wikiImgUrl%>">
+                          <% } %>
+
+                          <img id="wikidata-image" src="/image/<%=data.uri%>">
+                          <% if (data.wikiImgUrl){ %>
+                            <br>Image source.</a>
+                          <% } %>
+
+                </div>
+              </div>
+            </div>
+
+          <% }else{ %>
+
+            <p>
+
+              <%=data.wikiAbstract%>
+
+            </p>
+
+
+          <% } %>
+
+
+        </div>
+      </div>
+    </div>
+  <% } %>
 
   <% if (data.holdingsCount){ %>
     <div class="container">
@@ -74,23 +155,36 @@
   <% } %>
 
 
-  <% if (data.note.length>0){ %>
+  
     <div class="container">
       <div class="row">
         <div class="two columns">         
           <span class="eyebrow"></span>
           <span class="eyebrow-text">Note</span>
         </div>
-        <div class="ten columns classmark-page-content-column">
-                  <p>
-                    
-                    <%=data.note.join(",")%>
 
-                  </p>
-        </div>
+        <% if (data.note.length>0){ %>
+          <div class="ten columns classmark-page-content-column">
+                    <p>
+                      
+                      <%=data.note.join(",")%>
+
+                    </p>
+          </div>
+        <% }else{ %>
+          <div class="ten columns classmark-page-content-column">
+                    <p>
+                      
+                      No Notes found.
+
+                    </p>
+          </div>      
+        <% } %>
+
       </div>
     </div>
-  <% } %>
+
+
 
   <% if (data.broader.length>0){ %>
     <div class="container">
@@ -164,7 +258,7 @@
     </div>
   <% } %>
 
-  <% if (data.mappingDdc.length>0 || data.mappingLcc.length>0 || data.mappingLccRange.length>0){ %>
+  <% if (data.mappingDbpedia.length>0 || data.mappingDdc.length>0 || data.mappingLcc.length>0 || data.mappingLccRange.length>0 || data.mappingWikidata.length>0){ %>
     <div class="container">
       <div class="row">
         <div class="two columns">         
@@ -209,6 +303,19 @@
                     <td><%=data.mappingDdc[x]%></td>                  
                 </tr>            
             <% } %>
+            <% for (var x in data.mappingWikidata){ %>             
+                <tr class="classmark-page-alt-row">                  
+                    <td>Wikidata</td>
+                    <td><a href="http://www.wikidata.org/entity/<%=data.mappingWikidata[x]%>"><%=data.mappingWikidata[x]%></a></td>
+                </tr>            
+            <% } %>
+
+            <% for (var x in data.mappingDbpedia){ %>             
+                <tr class="classmark-page-alt-row">                  
+                    <td>DBpedia</td>
+                    <td><a href="http://www.dbpedia.org/resource/<%=data.mappingDbpedia[x]%>"><%=data.mappingDbpedia[x]%></a></td>
+                </tr>            
+            <% } %>
 
 
 
@@ -224,12 +331,11 @@
   <% if (user){ %>
 
     <div class="container">
-      <div class="row">
+      <div class="row staff-action">
         <div class="two columns">         
           <span class="eyebrow"></span>
           <span class="eyebrow-text">Connect To Wikipedia</span>
 
-          <div class="experimental">Experimental</div>
         </div>
         <div class="ten columns classmark-page-content-column">
 
@@ -285,6 +391,12 @@
                 <% } %>
                 <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/lccrange')>-1){ %>
                   window.billi.findLccRange("<%=data.hiddenLabel[0]%>");
+                <% } %>
+                <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/divisions')>-1){ %>
+                  window.billi.findClassmarks("<%=data.hiddenLabel[0]%>");
+                <% } %>
+                <% if (data.inScheme.indexOf('http://billi.nypl.org/classification/fixedorder')>-1){ %>
+                  window.billi.findClassmarks("<%=data.hiddenLabel[0]%>");
                 <% } %>
               });
 
@@ -394,6 +506,7 @@
     <tr class="wikipedia-connect-row">
       <td><#=item.label#></td>
       <td class="sample-resources-title"><a target="_blank" href="<#=item.url#>"><#=(item.description) ? item.description : item.title #></a></td>
+      <td><a class="wikipedia-connect-row-connect" href="/connect/<#=classmarkUri#>/to/<#=item.url.split('wiki/')[1]#>">Connect</td>
     </tr>
   
 

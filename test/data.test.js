@@ -179,5 +179,17 @@ describe('DATA Lib tests', function () {
 		})		
 	})
 
+	it('test if a classmark has a wikipedia link yet', function (done) {
+
+		data.hasWiki('G',function(err,results){
+
+			
+			results.should.equal(false)
+
+			done();
+		});
+
+	});
+
 
 })

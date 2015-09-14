@@ -107,11 +107,11 @@
 
 				this.searchWikiData(s[x],function(results){
 
-					document.getElementById("wikipedia-connect-header").innerHTML = "Select one of the Wikidata entities below as equivalent. Preferred entities have descriptions, and are listed first.";
+					document.getElementById("wikipedia-connect-header").innerHTML = "Select one of the Wikidata entities below as equivalent.";
 					
 					for (var x in results){
 
-						var html = billi.wikipediaConnectTemplate({item: results[x] });
+						var html = billi.wikipediaConnectTemplate({item: results[x], classmarkUri: classmarkUri });
 
 						if (results[x].description){
 							document.getElementById("wikipedia-connect-list-has-description").innerHTML = document.getElementById("wikipedia-connect-list-has-description").innerHTML + html;
@@ -196,6 +196,35 @@
 			}
 
 
+		},
+
+		bindClassmarkWikiAbstractExpand: function(){
+
+
+			var el = document.getElementById('wikidata-abstract-actions-expand-link');
+			console.log(el)
+
+			if (el){
+
+				el.addEventListener("click", function(event){
+
+					el.style.display='none';
+					var elA = document.getElementById('wikidata-abstract');
+					elA.style['max-height'] = '100000px';
+					elA.style['min-height'] = '200px';
+
+					var elI = document.getElementById('wikidata-image');
+
+					if (elI){
+						elI.style['height'] = '200px';
+					}
+
+					event.returnValue = false;
+
+					return false;
+				});
+
+			}
 		},
 
 
@@ -329,17 +358,23 @@
 	  billi.bindSearch();
 
 
-	  if (document.getElementById("wikipedia-connect-list-has-description") && classmarkPrefLabel){
+	if (document.getElementById("wikipedia-connect-list-has-description") && ( classmarkPrefLabel || classmarkHiddenLabel)){
 
 	  	billi.wikipediaConnectTemplate = _.template(document.getElementById("wikipedia-connect-template").innerHTML);
-	  	billi.buildConnectToWikipedia(classmarkPrefLabel)
+	  	if (classmarkPrefLabel){
+	  		billi.buildConnectToWikipedia(classmarkPrefLabel);
+	  	}else{
+	  		billi.buildConnectToWikipedia(classmarkHiddenLabel);
+	  	}
 
 	  	//bind the custom search
-	  	billi.bindWikiDataSearch()
-
-	  }
+	  	billi.bindWikiDataSearch();
 
 
+	}
+
+	//check if the wikidata expand thing needs to happen
+	billi.bindClassmarkWikiAbstractExpand();
 
 	  window.billi = billi;
 
