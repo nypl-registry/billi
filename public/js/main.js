@@ -282,7 +282,6 @@
 
 				});
 
-				item.innerHTML = 'this is value';
 			}
 
 
