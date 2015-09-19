@@ -442,6 +442,7 @@ img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-
 .wikidata-image img{
   height: 150px;
   width: auto;
+  max-width: 350px;
 }
 
 .wikidata-image a{
