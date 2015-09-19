@@ -449,14 +449,18 @@ app.get('/connect/:classmark/to/:wikiEntity', function(request, response, next) 
 			});
 
 		}else{
-			app.wiki.process(request.params.classmark,request.params.wikiEntity, agent,function(err,results){
 
+			app.wiki.process(request.params.classmark,request.params.wikiEntity, agent,function(err,results){
 				if (err){
 					response.status(500).send("Problems! " + err);
 				}else{
 					response.redirect(request.get('Referrer')); 
 				}
-			});
+			}, request.query.smallthumb );
+
+
+
+			
 		}
 
 
