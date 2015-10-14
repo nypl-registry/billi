@@ -104,7 +104,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: (process.env.NODE_ENV==='production') ? "https://billi.herokuapp.com/auth/callback" : "http://localhost:5000/auth/callback"
+    callbackURL: (process.env.NODE_ENV==='production') ? "https://billi.nypl.org/auth/callback" : "http://localhost:5000/auth/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
