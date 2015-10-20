@@ -389,7 +389,7 @@ app.get('/auth/callback',
   	//if they used a non nypl domain
   	
   	if (request.user){
-  		if (request.user._json.domain === 'nypl.org'){
+  		if (request.user._json.domain === 'nypl.org' || request.user._json.domain === 'bookops.org'){
 
   			var ref ="/";
 
