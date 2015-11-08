@@ -153,8 +153,13 @@ app.get('/classification/:classification', function(request, response) {
 				})
 			}else if (request.accepts('application/json') || request.accepts('application/ld+json')) {
 				app.rdf.rows2rdf(data,"jsonld",function(err,results){
-					response.type('application/ld+json');
-					response.status(200).send(results);
+					if (!err){
+						response.type('application/ld+json');
+						response.status(200).send(results);
+					}else{
+						response.type('application/ld+json');
+						response.status(500).send("error");
+					}
 				})				
 			}else if (request.accepts('text/turtle')) {
 				app.rdf.rows2rdf(data,"turtle",function(err,results){
@@ -202,8 +207,13 @@ app.get('/classification/:classification/:format', function(request, response) {
 				})
 			}else if(format.search('json') > -1){
 				app.rdf.rows2rdf(data.concat(relatedData),"jsonld",function(err,results){
-					response.type('application/json');
-					response.status(200).send(results);
+					if (!err){
+						response.type('application/ld+json');
+						response.status(200).send(results);
+					}else{
+						response.type('application/ld+json');
+						response.status(500).send("error");
+					}
 				})	
 			}
 		}else{
@@ -240,8 +250,13 @@ app.get('/classmark/:classmark/:format', function(request, response) {
 				})
 			}else if(format.search('json') > -1){
 				rdf.rows2rdf(data.concat(relatedData),"jsonld",function(err,results){
-					response.type('application/json');
-					response.status(200).send(results);
+					if (!err){
+						response.type('application/ld+json');
+						response.status(200).send(results);
+					}else{
+						response.type('application/ld+json');
+						response.status(500).send("error");
+					}
 				})	
 			}
 		}else{
@@ -268,8 +283,13 @@ app.get('/classmark/:classmark', function(request, response) {
 				})
 			}else if (request.accepts('application/json') || request.accepts('application/ld+json')) {
 				rdf.rows2rdf(data,"jsonld",function(err,results){
-					response.type('application/ld+json');
-					response.status(200).send(results);
+					if (!err){
+						response.type('application/ld+json');
+						response.status(200).send(results);
+					}else{
+						response.type('application/ld+json');
+						response.status(500).send("error");
+					}
 				})				
 			}else if (request.accepts('text/turtle')) {
 				rdf.rows2rdf(data,"turtle",function(err,results){
