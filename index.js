@@ -8,7 +8,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
+var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -19,8 +19,6 @@ var rdf = require('./lib/rdf.js')(app);
 var data = require('./lib/data.js')(app);
 var cache = require('./lib/cache.js')(app);
 var wiki = require('./lib/wiki.js')(app);
-
-
 
 //always populate the table if it has to be created
 app.db.createSearchTable(function(err,created){
@@ -45,7 +43,7 @@ app.use(compression());
 
 app.use(express.static(__dirname + '/public'));
 
-
+app.use( bodyParser.json() );
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -385,6 +383,64 @@ app.get('/api/wikidata/:query', function(request, response) {
 	});
 });
 
+app.post('/api/editfirsttriple/', function(request, response) { 
+
+	if (request.user){
+
+		var agent = request.user.name + ' (' + request.user.email + ')';
+
+
+		if (request.body.uri && request.body.predicate && request.body.value){
+			app.data.returnSingleTriple(request.body.uri, request.body.predicate,function(err,triple){
+				if (triple){
+
+
+					app.data.updateSingleTriple(triple,request.body.predicate,request.body.value, agent, function(err,results){
+						if (err){
+							response.setHeader('Content-Type', 'application/json');
+							response.send(JSON.stringify({success:false,error:err}) );
+						}else{
+							response.setHeader('Content-Type', 'application/json');
+							response.send(JSON.stringify({success:true}) );
+						}
+					})
+
+				}else{
+
+
+					
+
+						//there might not be a note already to edit, if not create a tempoary triple for it
+						var triple = { subject: request.body.uri }
+						app.data.updateSingleTriple(triple,request.body.predicate,request.body.value, agent, function(err,results){
+							if (err){
+								response.setHeader('Content-Type', 'application/json');
+								response.send(JSON.stringify({success:false,error:err}) );
+							}else{
+								response.setHeader('Content-Type', 'application/json');
+								response.send(JSON.stringify({success:true}) );
+							}
+						})
+				
+
+
+				}
+
+			})
+		}else{
+			response.setHeader('Content-Type', 'application/json');
+			response.send('{"success":false,"error":"Not all required paramaters provided."}');
+		}
+	}else{
+		response.status(500).send("Not Logged In");
+	}
+});
+
+
+
+
+
+
 app.get('/login', function(request, response) { 
 
     passport.authenticate("google",
@@ -407,6 +463,7 @@ app.get('/auth/callback',
 
   function(request, response) {
   	//if they used a non nypl domain
+
   	
   	if (request.user){
   		if (request.user._json.domain === 'nypl.org' || request.user._json.domain === 'bookops.org'){
@@ -493,14 +550,10 @@ app.get('/connect/:classmark/to/:wikiEntity', function(request, response, next) 
 
 });
 
-app.get('/disconnect/:classmark/from/wiki', function(request, response, next) {
-	
-	if (request.user){
-		
+app.get('/disconnect/:classmark/from/wiki', function(request, response, next) {	
+	if (request.user){		
 		var agent = request.user.name + ' (' + request.user.email + ')';
-
 		app.wiki.disconnect(request.params.classmark, agent,function(err,results){
-
 			if (err){
 				response.status(500).send("Problems! " + err);
 			}else{
@@ -510,8 +563,6 @@ app.get('/disconnect/:classmark/from/wiki', function(request, response, next) {
 	}else{
 		response.status(401).send("You are not logged in.");
 	}
-
-
 });
 
 

@@ -42,7 +42,10 @@
       <div class="row">
         <div class="ten columns classmark-page-hero-header">
             <h1><%=data.hiddenLabel.join(",")%></h1>
-            <h3><%=data.prefLabel.join(",")%></h3>
+            <h3 id="classmark-hero-edit-label"><%-data.prefLabel.join(",")%></h3>
+            <% if (user){ %>
+              <h3 class="classmark-hero-edit">e</h3><h3 class="classmark-hero-cancel" style="">x</h3><h3 class="classmark-hero-save">c</h3><h3 class="classmark-hero-status"></h3>
+            <% } %>
         </div>
       </div>
     </div>
@@ -153,7 +156,7 @@
       <div class="row">
         <div class="two columns">         
           <span class="eyebrow"></span>
-          <span class="eyebrow-text">Holdings Count</span>
+          <span class="eyebrow-text" data-tooltip="The number of resources found in the catalog with this classmark.">Holdings Count</span>
         </div>
         <div class="ten columns classmark-page-content-column">
                    
@@ -173,25 +176,17 @@
           <span class="eyebrow"></span>
           <span class="eyebrow-text">Note</span>
         </div>
-
-        <% if (data.note.length>0){ %>
-          <div class="ten columns classmark-page-content-column">
-                    <p>
-                      
-                      <%=data.note.join(",")%>
-
-                    </p>
-          </div>
-        <% }else{ %>
-          <div class="ten columns classmark-page-content-column">
-                    <p>
-                      
-                      No Notes found.
-
-                    </p>
-          </div>      
-        <% } %>
-
+        <div class="ten columns classmark-page-content-column classmark-notes-edit-container">
+          <% if (data.note.length>0){ %>            
+            <span id="classmark-notes-edit"><%=data.note.join(",")%></span>
+          <% }else{ %>
+            <span id="classmark-notes-edit">No Notes found.</span>
+          <% } %>
+          <div class="classmark-notes-edit">e</div>
+          <div class="classmark-notes-cancel">x</div>
+          <div class="classmark-notes-save">c</div>
+          <div class="classmark-notes-status"></div>
+        </div>  
       </div>
     </div>
 
@@ -209,9 +204,9 @@
 
           <% for (var x in data.broaderHierarchy){ %>
             <% if (x > 0){ %>
-              <div class="search-result-item-level" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
+              <div class="search-result-item-level" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%-data.broaderHierarchy[x].prefLabel%></a></div>
             <% }else{ %>
-              <div class="search-result-item-level-first" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%=data.broaderHierarchy[x].prefLabel%></a></div>
+              <div class="search-result-item-level-first" style="padding-left:<%=x*3%>%"><a href="/classmark/<%=data.broaderHierarchy[x].classmarkUrlSafe%>"><%-data.broaderHierarchy[x].prefLabel%></a></div>
             <% } %>
           <% } %>
 
@@ -524,7 +519,17 @@
             <tbody>
             <% for (var x in data.changenote){ %>             
                 <tr class="classmark-page-alt-row">                  
-                    <td><%=data.changenote[x]%></td>                  
+                    <td><%=data.changenote[x].date%></td>
+                    <td><%=data.changenote[x].predicate%></td>
+                    <td><%=data.changenote[x].action%></td> 
+                    <td>
+                        <% if (user){ %>
+                          <%=data.changenote[x].who%>
+                        <%}else{%>
+                          Staff Memeber
+                        <% } %>
+
+                    </td>            
                 </tr>            
             <% } %>
             </tbody>

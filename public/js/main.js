@@ -16,6 +16,8 @@
 
 	var billi = {
 
+		orgValStore: {},
+
 		buildSearchArray : function(string){
 
 
@@ -209,7 +211,7 @@
 
 
 			var el = document.getElementById('wikidata-abstract-actions-expand-link');
-			console.log(el)
+			
 
 			if (el){
 
@@ -238,7 +240,7 @@
 
 
 			var el = document.getElementById('wikipedia-connect-show-link');
-			console.log(el)
+			
 
 			if (el){
 
@@ -407,10 +409,209 @@
 			request.send();
 
 
+		},
+
+
+		bindHeroLabelEdit: function(){
+
+			var self = this;
+
+
+			var el = document.querySelectorAll('.classmark-hero-edit');
+			if (el.length===0) el = null
+
+
+			if (el){
+
+				el= el[0]
+
+				el.addEventListener("click", function(event){
+					self.enableHtmlEditable("classmark-hero-edit-label",".classmark-hero",'skos:prefLabel')
+					el.style.display = "none";
+					return false;
+				});
+
+			}
+		},
+
+		bindNoteEdit: function(){
+
+			var self = this;
+
+
+			var el = document.querySelectorAll('.classmark-notes-edit');
+			if (el.length===0) el = null
+
+
+			if (el){
+
+				el= el[0]
+
+				el.addEventListener("click", function(event){
+					self.enableHtmlEditable("classmark-notes-edit",".classmark-notes",'skos:note')
+					el.style.display = "none";
+					return false;
+				});
+
+			}
+		},
+
+		strip: function(html) {
+		    var tempDiv = document.createElement("DIV");
+		    tempDiv.innerHTML = html;
+		    return tempDiv.innerText;
+		},
+
+		
+
+		enableHtmlEditable: function(targetId,triggerClassBase,predicate){
+
+			var self = this
+
+
+			var targetEl = document.getElementById(targetId);
+
+			var triggerEl = document.querySelectorAll(triggerClassBase+"-edit")			
+			if (triggerEl) if (triggerEl[0]) triggerEl = triggerEl[0]
+			
+			var triggerCancelEl = document.querySelectorAll(triggerClassBase+"-cancel")
+			if (triggerCancelEl) if (triggerCancelEl[0]) triggerCancelEl = triggerCancelEl[0]
+
+			var triggerSaveEl = document.querySelectorAll(triggerClassBase+"-save")
+			if (triggerSaveEl) if (triggerSaveEl[0]) triggerSaveEl = triggerSaveEl[0]
+
+			var triggerStatusEl = document.querySelectorAll(triggerClassBase+"-status")
+			if (triggerStatusEl) if (triggerStatusEl[0]) triggerStatusEl = triggerStatusEl[0]
+
+			var save = function(){
+				targetEl.classList.remove('edit-enabled');						
+				targetEl.contentEditable='false';
+				window.getSelection().removeAllRanges();
+				triggerEl.style.display = "inline-block";
+				if (triggerCancelEl) triggerCancelEl.style.display="none"
+				if (triggerSaveEl) triggerSaveEl.style.display="none"
+				triggerStatusEl.style.transition = "opacity 0s";
+				triggerStatusEl.style.opacity = "1";
+				triggerStatusEl.style.display = "inline-block";
+				
+				self.postTripleEditFirst(classmarkUri,predicate,self.strip(targetEl.innerHTML),function(err){
+
+
+
+					if (err){
+						triggerStatusEl.style.color = "#CC1A16";						
+						triggerStatusEl.innerHTML = "ERROR: "+err;
+					}else{
+						
+						triggerStatusEl.style.color = "greenyellow";						
+						triggerStatusEl.innerHTML = "SAVED";
+						triggerStatusEl.style.transition = "opacity 5s";
+						setTimeout(function(){
+							triggerStatusEl.style.opacity = "0";
+						},100)
+
+						setTimeout(function(){
+							triggerStatusEl.style.display = "none";
+
+						},5000)
+
+						
+					}
+				})
+				triggerSaveEl = null
+			}
+
+			var cancel = function(){
+				targetEl.innerHTML = self.orgValStore[targetId];						
+				targetEl.classList.remove('edit-enabled');						
+				targetEl.contentEditable='false';
+				window.getSelection().removeAllRanges();
+				triggerEl.style.display = "inline-block";
+				if (triggerCancelEl) triggerCancelEl.style.display="none"
+				if (triggerSaveEl) triggerSaveEl.style.display="none"
+
+			}
+
+
+
+			if (targetEl){
+
+				self.orgValStore[targetId] = targetEl.innerHTML;
+				targetEl.contentEditable='true';
+				var range = document.createRange();
+				range.selectNodeContents(targetEl);
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+
+				targetEl.classList.add('edit-enabled');
+
+				targetEl.addEventListener('keydown', function(e) {
+
+					if (targetEl){				    
+						if (e.keyCode === 27){
+							cancel()
+							targetEl = null;
+
+						}
+						if (e.keyCode === 13){
+							save()
+							targetEl = null;
+						}
+					}
+
+				});
+			}
+
+			if (triggerCancelEl){
+				if (triggerCancelEl) triggerCancelEl.style.display="inline-block"
+				triggerCancelEl.addEventListener("click", function(event){
+					cancel()
+					triggerCancelEl=null
+				})
+
+			}
+			if (triggerSaveEl){
+				if (triggerSaveEl) triggerSaveEl.style.display="inline-block"
+				triggerSaveEl.addEventListener("click", function(event){
+					if (triggerSaveEl){
+						save()
+						triggerSaveEl = null
+					}
+				})
+			}
+
+
+			
+		},
+
+
+
+		postTripleEditFirst: function(uri,predicate,value,callback){
+			var request = new XMLHttpRequest();
+			request.open('POST', '/api/editfirsttriple', true);
+			request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+			request.send(JSON.stringify({ uri: uri, predicate: predicate, value: value  }));
+			request.onload = function() {
+				if (this.status >= 200 && this.status < 400) {
+					var resp = JSON.parse(this.response);
+					if (!resp.success){
+						if (callback) callback(resp.error)
+					}else{
+						if (callback) callback(null)
+					}
+				} else {
+					if (callback) callback("There was an error.")
+				}
+			};
+
+
 		}
 
 
+
 	}
+
 
 
 
@@ -440,6 +641,14 @@
 	//check if the wikidata expand thing needs to happen
 	billi.bindClassmarkWikiAbstractExpand();
 	billi.bindWikipediaShow();
+
+
+	billi.bindHeroLabelEdit();
+	billi.bindNoteEdit();
+
+
+
+
 	
 	window.billi = billi;
 

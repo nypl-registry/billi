@@ -2,6 +2,34 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+
+  <script>
+
+  <% if (data.prefLabel) { %>
+
+    <% if (data.prefLabel[0]) { %>
+      var classmarkPrefLabel = "<%=data.prefLabel[0]%>"; 
+    <% }else{ %>
+      var classmarkPrefLabel = false; 
+    <% } %>
+
+    <% if (data.hiddenLabel[0]) { %>
+      var classmarkHiddenLabel = "<%=data.hiddenLabel[0]%>"; 
+    <% }else{ %>
+      var classmarkHiddenLabel = false; 
+    <% } %>
+
+    <% if (data.uri) { %>
+      var classmarkUri = "<%=data.uri%>"; 
+    <% }else{ %>
+      var classmarkUri = false; 
+    <% } %>
+
+  <% } %>
+
+
+  </script>
+  
 </head>
 
 <body>
@@ -28,13 +56,17 @@
           <span class="eyebrow"></span>
           <span class="eyebrow-text">Note</span>
         </div>
-        <div class="ten columns classmark-page-content-column">
-                  <p>
-                    
-                    <%=data.note.join(",")%>
-
-                  </p>
-        </div>
+        <div class="ten columns classmark-page-content-column classmark-notes-edit-container">
+          <% if (data.note.length>0){ %>            
+            <span id="classmark-notes-edit"><%=data.note.join(",")%></span>
+          <% }else{ %>
+            <span id="classmark-notes-edit">No Notes found.</span>
+          <% } %>
+          <div class="classmark-notes-edit">e</div>
+          <div class="classmark-notes-cancel">x</div>
+          <div class="classmark-notes-save">c</div>
+          <div class="classmark-notes-status"></div>
+        </div>  
       </div>
     </div>
   <% } %>
@@ -128,7 +160,17 @@
             <tbody>
             <% for (var x in data.changenote){ %>             
                 <tr class="classmark-page-alt-row">                  
-                    <td><%=data.changenote[x]%></td>                  
+                    <td><%=data.changenote[x].date%></td>
+                    <td><%=data.changenote[x].predicate%></td>
+                    <td><%=data.changenote[x].action%></td> 
+                    <td>
+                        <% if (user){ %>
+                          <%=data.changenote[x].who%>
+                        <%}else{%>
+                          Staff Memeber
+                        <% } %>
+
+                    </td>            
                 </tr>            
             <% } %>
             </tbody>

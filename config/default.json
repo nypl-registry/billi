@@ -2,9 +2,6 @@
 
 
   "Prefixes":{
-
-    
-
     "skos:"           : "http://www.w3.org/2004/02/skos/core#",
     "class:"          : "http://billi.nypl.org/classmark/",
     "classification:" : "http://billi.nypl.org/classification/",
@@ -18,6 +15,15 @@
     "wikidata:"   : "http://www.wikidata.org/entity/",
     "dbpo:"        : "http://dbpedia.org/ontology/",
     "dbpr:"        : "http://dbpedia.org/resource/"
+  },
+
+  "EditablePredicates":{
+    "skos:prefLabel" : "literal",
+    "skos:note" : "literal"
+  },
+
+  "UpdateSearchPredicates":{
+    "skos:prefLabel" : true
   },
 
   "ignoreSearchClassmarkPrefixes" : [
