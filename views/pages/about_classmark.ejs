@@ -182,10 +182,12 @@
           <% }else{ %>
             <span id="classmark-notes-edit">No Notes found.</span>
           <% } %>
-          <div class="classmark-notes-edit">e</div>
-          <div class="classmark-notes-cancel">x</div>
-          <div class="classmark-notes-save">c</div>
-          <div class="classmark-notes-status"></div>
+          <% if (user){ %>
+            <div class="classmark-notes-edit">e</div>
+            <div class="classmark-notes-cancel">x</div>
+            <div class="classmark-notes-save">c</div>
+            <div class="classmark-notes-status"></div>
+          <% } %>
         </div>  
       </div>
     </div>
