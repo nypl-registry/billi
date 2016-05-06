@@ -533,14 +533,9 @@ app.get('/connect/:classmark/to/:wikiEntity', function(request, response, next) 
 				}else{
 					response.redirect(request.get('Referrer')); 
 				}
-			}, request.query.smallthumb );
-
-
-
+			}, request.query.smallthumb )
 			
 		}
-
-
 
 
 	}else{
